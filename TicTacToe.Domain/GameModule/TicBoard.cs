@@ -27,6 +27,26 @@
                    CheckDiagonalsForWin() != null;
         }
 
+        public bool HasTie()
+        {
+            return !HasBlankCells() && !HasWinningSequence();
+        }
+
+        private bool HasBlankCells()
+        {
+            for (int x = 0; x < MAX_WIDTH; x++)
+            {
+                for (int y = 0; y < MAX_HEIGHT; y++)
+                {
+                    if (_board[x, y].State == TicBoardCellState.BLANK)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
         private void InitializeCells()
         {
             for (int x = 0; x < MAX_WIDTH; x++)
