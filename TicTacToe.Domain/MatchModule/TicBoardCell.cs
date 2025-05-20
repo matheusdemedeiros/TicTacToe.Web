@@ -2,7 +2,7 @@
 {
     public class TicBoardCell
     {
-        public string Simble { get; private set; }
+        public string Symbol { get; private set; }
         public TicBoardCellState State { get; private set; }
 
         public TicBoardCell()
@@ -17,7 +17,7 @@
                 return;
             }
 
-            Simble = simble;
+            Symbol = simble;
             State = TicBoardCellState.MARKED;
         }
     }

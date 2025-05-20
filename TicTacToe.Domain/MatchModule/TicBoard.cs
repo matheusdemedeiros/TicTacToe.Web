@@ -63,10 +63,10 @@
             for (int row = 0; row < MAX_HEIGHT; row++)
             {
                 if (_board[row, 0].State != TicBoardCellState.BLANK &&
-                    _board[row, 0].Simble == _board[row, 1].Simble &&
-                    _board[row, 1].Simble == _board[row, 2].Simble)
+                    _board[row, 0].Symbol == _board[row, 1].Symbol &&
+                    _board[row, 1].Symbol == _board[row, 2].Symbol)
                 {
-                    WinningSimbol = _board[row, 0].Simble;
+                    WinningSimbol = _board[row, 0].Symbol;
                     return new List<TicBoardCell>
                             {
                                 _board[row, 0],
@@ -84,10 +84,10 @@
             for (int column = 0; column < MAX_WIDTH; column++)
             {
                 if (_board[0, column].State != TicBoardCellState.BLANK &&
-                    _board[0, column].Simble == _board[1, column].Simble &&
-                    _board[1, column].Simble == _board[2, column].Simble)
+                    _board[0, column].Symbol == _board[1, column].Symbol &&
+                    _board[1, column].Symbol == _board[2, column].Symbol)
                 {
-                    WinningSimbol = _board[0, column].Simble;
+                    WinningSimbol = _board[0, column].Symbol;
                     return new List<TicBoardCell>
                         {
                             _board[0, column],
@@ -103,10 +103,10 @@
         private List<TicBoardCell> CheckDiagonalsForWin()
         {
             if (_board[0, 0].State != TicBoardCellState.BLANK &&
-                _board[0, 0].Simble == _board[1, 1].Simble &&
-                _board[1, 1].Simble == _board[2, 2].Simble)
+                _board[0, 0].Symbol == _board[1, 1].Symbol &&
+                _board[1, 1].Symbol == _board[2, 2].Symbol)
             {
-                WinningSimbol = _board[0, 0].Simble;
+                WinningSimbol = _board[0, 0].Symbol;
                 return new List<TicBoardCell>
                         {
                             _board[0, 0],
@@ -116,10 +116,10 @@
             }
 
             if (_board[0, 2].State != TicBoardCellState.BLANK &&
-                _board[0, 2].Simble == _board[1, 1].Simble &&
-                _board[1, 1].Simble == _board[2, 0].Simble)
+                _board[0, 2].Symbol == _board[1, 1].Symbol &&
+                _board[1, 1].Symbol == _board[2, 0].Symbol)
             {
-                WinningSimbol = _board[0, 2].Simble;
+                WinningSimbol = _board[0, 2].Symbol;
                 return new List<TicBoardCell>
                         {
                             _board[0, 2],
