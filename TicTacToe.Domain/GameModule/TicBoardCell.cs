@@ -5,7 +5,7 @@
         public string Simble { get; private set; }
         public TicBoardCellState State { get; private set; }
 
-        public void MardlCell(string simble)
+        public void MarkCell(string simble)
         {
             if (State != TicBoardCellState.BLANK)
             {

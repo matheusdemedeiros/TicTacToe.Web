@@ -16,7 +16,7 @@
 
         public void MarkCell(string simble, int positionX, int positionY)
         {
-            _board[positionX, positionY].MardlCell(simble);
+            _board[positionX, positionY].MarkCell(simble);
         }
 
         public void HasWinningSequence()
