@@ -5,6 +5,11 @@
         public string Simble { get; private set; }
         public TicBoardCellState State { get; private set; }
 
+        public TicBoardCell()
+        {
+            State = TicBoardCellState.BLANK;
+        }
+
         public void MarkCell(string simble)
         {
             if (State != TicBoardCellState.BLANK)

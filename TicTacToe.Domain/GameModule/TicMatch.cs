@@ -5,6 +5,8 @@
         public Guid Id { get; private set; }
         public List<TicPlayer> Players { get; private set; }
         public TicBoard Board { get; private set; }
+        public TicMatchState State { get; private set; }
+        public string WinningSimbol { get; private set; }
 
         private const int MAX_PLAYERS = 2;
 
@@ -37,7 +39,11 @@
 
         public void DetectWin()
         {
-
+            if (Board.HasWinningSequence() && State == TicMatchState.IN_PROGRESS)
+            {
+                WinningSimbol = Board.WinningSimbol;
+                State = TicMatchState.FINISHED;
+            }
         }
     }
 }
