@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Domain.GameModule
+﻿namespace TicTacToe.Domain.MatchModule
 {
     public class TicScore
     {
@@ -17,7 +17,7 @@
             else
             {
                 Tie = false;
-                WinningSymbol = winningPlayer.Symbol;
+                WinningSymbol = winningPlayer.S;
                 WinningPlayer = winningPlayer;
             }
         }
