@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Domain.GameModule
+﻿namespace TicTacToe.Domain.MatchModule
 {
     public class TicPlayer
     {
