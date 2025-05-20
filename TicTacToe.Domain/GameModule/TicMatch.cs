@@ -6,8 +6,9 @@
         public List<TicPlayer> Players { get; private set; }
         public TicBoard Board { get; private set; }
         public TicMatchState State { get; private set; }
-        public string WinningSimbol { get; private set; }
+        public TicScore TicScore { get; private set; }
 
+        private string _winningSimbol;
         private const int MAX_PLAYERS = 2;
 
         public TicMatch()
@@ -16,7 +17,8 @@
             Players = new List<TicPlayer>();
             Board = new TicBoard();
             State = TicMatchState.NOT_STARTED;
-            WinningSimbol = string.Empty;
+            _winningSimbol = string.Empty;
+            TicScore = new TicScore();
         }
 
         public void AddPlayer(TicPlayer ticPlayer)
@@ -42,6 +44,7 @@
         public void FinishMatch()
         {
             State = TicMatchState.FINISHED;
+            SetScore();
         }
 
         public void MakePlay(string simble, int positionX, int positionY)
@@ -61,9 +64,14 @@
         {
             if (Board.HasWinningSequence() && State == TicMatchState.IN_PROGRESS)
             {
-                WinningSimbol = Board.WinningSimbol;
+                _winningSimbol = Board.WinningSimbol;
                 FinishMatch();
             }
+        }
+
+        private void SetScore()
+        {
+            TicScore.Set(_winningSimbol == string.Empty ? null : Players.FirstOrDefault(p => p.Symbol == _winningSimbol));
         }
     }
 }
