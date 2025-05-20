@@ -15,6 +15,8 @@
             Id = Guid.NewGuid();
             Players = new List<TicPlayer>();
             Board = new TicBoard();
+            State = TicMatchState.NOT_STARTED;
+            WinningSimbol = string.Empty;
         }
 
         public void AddPlayer(TicPlayer ticPlayer)
@@ -27,6 +29,16 @@
             Players.Add(ticPlayer);
         }
 
+        public void StartMatch()
+        {
+            if (Players.Count != MAX_PLAYERS)
+            {
+                throw new InvalidOperationException("Match cannot start without two players.");
+            }
+
+            State = TicMatchState.IN_PROGRESS;
+        }
+
         public void MakePlay(string simble, int positionX, int positionY)
         {
             Board.MarkCell(simble, positionX, positionY);
@@ -34,7 +46,10 @@
 
         public void IsTie()
         {
-
+            if (Board.HasTie() && State == TicMatchState.IN_PROGRESS)
+            {
+                State = TicMatchState.FINISHED;
+            }
         }
 
         public void DetectWin()
