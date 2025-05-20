@@ -39,6 +39,11 @@
             State = TicMatchState.IN_PROGRESS;
         }
 
+        public void FinishMatch()
+        {
+            State = TicMatchState.FINISHED;
+        }
+
         public void MakePlay(string simble, int positionX, int positionY)
         {
             Board.MarkCell(simble, positionX, positionY);
@@ -48,7 +53,7 @@
         {
             if (Board.HasTie() && State == TicMatchState.IN_PROGRESS)
             {
-                State = TicMatchState.FINISHED;
+                FinishMatch();
             }
         }
 
@@ -57,7 +62,7 @@
             if (Board.HasWinningSequence() && State == TicMatchState.IN_PROGRESS)
             {
                 WinningSimbol = Board.WinningSimbol;
-                State = TicMatchState.FINISHED;
+                FinishMatch();
             }
         }
     }
