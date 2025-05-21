@@ -99,6 +99,70 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
         }
 
         [Fact]
+        public void DetectWin_WhenWinningSequenceExists_ShouldFinishMatchAndSetWinner()
+        {
+            // Arrange
+            var match = new TicMatch();
+            var p1 = CreatePlayer("Alice", "X");
+            var p2 = CreatePlayer("Bob", "O");
+
+            match.AddPlayer(p1);
+            match.AddPlayer(p2);
+            match.StartMatch();
+
+            // X makes a winning row (top row)
+            match.MakePlay("X", 0, 0);
+            match.MakePlay("X", 0, 1);
+            match.MakePlay("X", 0, 2);
+
+            // Act
+            match.DetectWin();
+
+            // Assert
+            Assert.Equal(TicMatchState.FINISHED, match.State);
+            Assert.False(match.TicScore.Tie);
+            Assert.Equal(p1, match.TicScore.WinningPlayer);
+            Assert.Equal("X", match.TicScore.WinningSymbol);
+        }
+
+
+        [Fact]
+        public void IsTie_WhenBoardIsFullAndNoWinner_ShouldFinishMatchAndSetTieScore()
+        {
+            // Arrange
+            var match = new TicMatch();
+            var p1 = new TicPlayer("Alice", "alice123", "X");
+            var p2 = new TicPlayer("Bob", "bob123", "O");
+
+            match.AddPlayer(p1);
+            match.AddPlayer(p2);
+            match.StartMatch();
+
+            // Simula empate:
+            // X O X
+            // X O O
+            // O X X
+            match.MakePlay("X", 0, 0);
+            match.MakePlay("O", 0, 1);
+            match.MakePlay("X", 0, 2);
+            match.MakePlay("X", 1, 0);
+            match.MakePlay("O", 1, 1);
+            match.MakePlay("O", 1, 2);
+            match.MakePlay("O", 2, 0);
+            match.MakePlay("X", 2, 1);
+            match.MakePlay("X", 2, 2);
+
+            // Act
+            match.IsTie();
+
+            // Assert
+            Assert.Equal(TicMatchState.FINISHED, match.State);
+            Assert.True(match.TicScore.Tie);
+            Assert.Null(match.TicScore.WinningPlayer);
+            Assert.Equal(string.Empty, match.TicScore.WinningSymbol);
+        }
+
+        [Fact]
         public void IsTie_WhenBoardFullWithoutWinner_SetsMatchAsTied()
         {
             var match = new TicMatch();
