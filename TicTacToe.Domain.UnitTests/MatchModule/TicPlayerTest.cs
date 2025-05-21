@@ -13,7 +13,7 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
             var nickName = "joaozin";
 
             // Act
-            var player = new TicPlayer(name, nickName);
+            var player = new TicPlayer(name, nickName, "O");
 
             // Assert
             Assert.Equal(name, player.Name);
@@ -29,8 +29,18 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
         public void Constructor_WithNullOrEmptyNameOrNickName_ShouldThrowDomainException(string name, string nickName)
         {
             // Act & Assert
-            var ex = Assert.Throws<DomainException>(() => new TicPlayer(name, nickName));
+            var ex = Assert.Throws<DomainException>(() => new TicPlayer(name, nickName, "X"));
             Assert.Equal("Name and NickName cannot be null or empty.", ex.Message);
+        }
+
+        [Theory]
+        [InlineData("valid", "valid", null)]
+        [InlineData("valid", "valid", "")]
+        public void Constructor_WithNullOrEmptySymbol_ShouldThrowDomainException(string name, string nickName, string symbol)
+        {
+            // Act & Assert
+            var ex = Assert.Throws<DomainException>(() => new TicPlayer(name, nickName, symbol));
+            Assert.Equal("TicPlayer symbol is required.", ex.Message);
         }
     }
 }
