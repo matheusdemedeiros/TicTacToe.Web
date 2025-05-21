@@ -1,0 +1,20 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+
+    <h2 class="text-xl font-bold">Partida: ABC123</h2>
+    <p class="text-gray-500 mb-4">Jogador atual: <span class="font-semibold text-black">X</span></p>
+
+    <div class="grid grid-cols-3 gap-2 mb-6">
+      @for (cell of board; track cellIndex) {
+      <button
+        class="w-full aspect-square bg-gray-100 border border-gray-300 rounded-xl text-3xl font-bold flex items-center justify-center hover:bg-gray-200 transition">
+        {{ cell }}
+      </button>
+      }
+    </div>
+
+    <button class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition" (click)="resetGame()">
+      Reiniciar
+    </button>
+  </div>
+</div>
