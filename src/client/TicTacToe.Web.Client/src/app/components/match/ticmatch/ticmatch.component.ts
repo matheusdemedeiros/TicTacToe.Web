@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { TicBoardComponent } from '../tic-board/tic-board.component';
 
 @Component({
   selector: 'app-ticmatch-page',
-  imports: [],
+  imports: [TicBoardComponent],
   standalone: true,
   templateUrl: './ticmatch.component.html',
   styleUrl: './ticmatch.component.scss'
@@ -10,15 +11,6 @@ import { Component, OnInit } from '@angular/core';
 export class TicMatchComponent implements OnInit {
   matchId = 'ABC123';
   currentPlayer = 'O'; // ou 'O'
-  public board: string[] = Array(9).fill('X');
-  winner: string | null = null;
-  public cellIndex: number = 0;
 
   public ngOnInit(): void { }
-
-  public resetGame(): void {
-    this.board = Array(9).fill('');
-    this.currentPlayer = 'X';
-    this.winner = null;
-  }
 }
