@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 
 @Component({
-  selector: 'app-ticmatch-page',
+  selector: 'app-tic-match',
   imports: [TicBoardComponent],
   standalone: true,
-  templateUrl: './ticmatch.component.html',
-  styleUrl: './ticmatch.component.scss'
+  templateUrl: './tic-match.component.html',
+  styleUrl: './tic-match.component.scss'
 })
 export class TicMatchComponent implements OnInit {
   matchId = 'ABC123';

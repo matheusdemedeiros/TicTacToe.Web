@@ -4,6 +4,7 @@ import { TicBoardCellComponent } from '../tic-board-cell/tic-board-cell.componen
 @Component({
   selector: 'app-tic-board',
   imports: [TicBoardCellComponent],
+  standalone: true,
   templateUrl: './tic-board.component.html',
   styleUrl: './tic-board.component.scss'
 })

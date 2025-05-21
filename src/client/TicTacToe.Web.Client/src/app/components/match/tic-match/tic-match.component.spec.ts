@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TicMatchComponent } from './ticmatch.component';
+import { TicMatchComponent } from './tic-match.component';
 
 describe('TicMatchComponent', () => {
   let component: TicMatchComponent;
