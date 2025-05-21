@@ -17,7 +17,7 @@
             else
             {
                 Tie = false;
-                WinningSymbol = winningPlayer.S;
+                WinningSymbol = winningPlayer.Symbol;
                 WinningPlayer = winningPlayer;
             }
         }
