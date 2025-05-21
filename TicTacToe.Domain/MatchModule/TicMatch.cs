@@ -1,4 +1,6 @@
-﻿namespace TicTacToe.Domain.MatchModule
+﻿using TicTacToe.Domain.SharedModule.Exceptions;
+
+namespace TicTacToe.Domain.MatchModule
 {
     public class TicMatch
     {
@@ -25,7 +27,7 @@
         {
             if (Players.Count >= MAX_PLAYERS)
             {
-                return;
+                throw new DomainException("Match already has MAX players.");
             }
 
             Players.Add(ticPlayer);
@@ -35,7 +37,7 @@
         {
             if (Players.Count != MAX_PLAYERS)
             {
-                throw new InvalidOperationException("Match cannot start without two players.");
+                throw new DomainException("Match cannot start without two players.");
             }
 
             State = TicMatchState.IN_PROGRESS;
