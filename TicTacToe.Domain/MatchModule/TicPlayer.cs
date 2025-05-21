@@ -6,7 +6,7 @@ namespace TicTacToe.Domain.MatchModule
     {
         public string Name { get; private set; }
         public string NickName { get; private set; }
-        public string Symbol { get; private set; }
+        public string Symbol { get; set; }
 
         public TicPlayer(string name, string nickName)
         {
