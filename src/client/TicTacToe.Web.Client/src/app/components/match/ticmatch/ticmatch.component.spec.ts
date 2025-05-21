@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TicboardPageComponent } from './ticboard-page.component';
+import { TicMatchComponent } from './ticmatch.component';
 
-describe('TicboardPageComponent', () => {
-  let component: TicboardPageComponent;
-  let fixture: ComponentFixture<TicboardPageComponent>;
+describe('TicMatchComponent', () => {
+  let component: TicMatchComponent;
+  let fixture: ComponentFixture<TicMatchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TicboardPageComponent]
+      imports: [TicMatchComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TicboardPageComponent);
+    fixture = TestBed.createComponent(TicMatchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

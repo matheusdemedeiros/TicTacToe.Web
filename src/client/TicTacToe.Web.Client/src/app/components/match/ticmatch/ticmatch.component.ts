@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-ticboard-page',
+  selector: 'app-ticmatch-page',
   imports: [],
   standalone: true,
-  templateUrl: './ticboard-page.component.html',
-  styleUrl: './ticboard-page.component.scss'
+  templateUrl: './ticmatch.component.html',
+  styleUrl: './ticmatch.component.scss'
 })
-export class TicboardPageComponent implements OnInit {
+export class TicMatchComponent implements OnInit {
   matchId = 'ABC123';
   currentPlayer = 'O'; // ou 'O'
   public board: string[] = Array(9).fill('X');
