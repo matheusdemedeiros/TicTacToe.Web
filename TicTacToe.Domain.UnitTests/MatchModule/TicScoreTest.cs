@@ -8,7 +8,7 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
         public void Set_WithWinningPlayer_ShouldSetWinnerAndSymbolAndTieFalse()
         {
             // Arrange
-            var player = new TicPlayer("João", "joaozin") { Symbol = "X" };
+            var player = new TicPlayer("João", "joaozin", "X");
             var score = new TicScore();
 
             // Act
