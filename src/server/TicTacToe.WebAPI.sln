@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D64F19E0-0404-4A7A-98C1-287FF9D26C4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Infra,Data", "TicTacToe.Infra,Data\TicTacToe.Infra,Data.csproj", "{5B9817CD-6417-4F73-8122-93DD8F7991C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{CBE354BE-1F10-476F-803D-B04750DCEB86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBE354BE-1F10-476F-803D-B04750DCEB86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBE354BE-1F10-476F-803D-B04750DCEB86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B9817CD-6417-4F73-8122-93DD8F7991C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B9817CD-6417-4F73-8122-93DD8F7991C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B9817CD-6417-4F73-8122-93DD8F7991C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B9817CD-6417-4F73-8122-93DD8F7991C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{E784052E-4F5E-4524-BCC1-E355636A7A7E} = {AAF30B57-4806-4BCE-9E31-5982C1D0297A}
 		{B85D131C-320C-4706-8215-7A3409DD48C9} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{CBE354BE-1F10-476F-803D-B04750DCEB86} = {D64F19E0-0404-4A7A-98C1-287FF9D26C4F}
+		{5B9817CD-6417-4F73-8122-93DD8F7991C9} = {D0CCA75C-3E83-49F9-8B55-68AC490EBE0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {782577DD-B967-4CD0-8C5A-89D291542E0D}
