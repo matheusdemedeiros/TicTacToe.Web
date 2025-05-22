@@ -1,4 +1,4 @@
-﻿using TicTacToe.Domain.MatchModule;
+﻿using TicTacToe.Domain.Entities.MatchModule;
 
 namespace TicTacToe.Domain.UnitTests.MatchModule
 {

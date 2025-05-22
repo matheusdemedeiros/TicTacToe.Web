@@ -1,4 +1,4 @@
-﻿namespace TicTacToe.Domain.MatchModule
+﻿namespace TicTacToe.Domain.Entities.MatchModule
 {
     public class TicScore
     {
