@@ -9,8 +9,8 @@ import { TicBoardComponent } from '../tic-board/tic-board.component';
   styleUrl: './tic-match.component.scss'
 })
 export class TicMatchComponent implements OnInit {
-  matchId = 'ABC123';
-  currentPlayer = 'O'; // ou 'O'
+  currentSymbol: string = 'O';
+  currentMatch: string = '123ABC';
 
   public ngOnInit(): void { }
 }
