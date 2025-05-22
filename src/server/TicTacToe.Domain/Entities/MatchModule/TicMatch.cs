@@ -1,10 +1,10 @@
-﻿using TicTacToe.Domain.SharedModule.Exceptions;
+﻿using TicTacToe.Domain.Entities.BaseModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Domain.Entities.MatchModule
 {
-    public class TicMatch
+    public class TicMatch : BaseEntity
     {
-        public Guid Id { get; private set; }
         public List<TicPlayer> Players { get; private set; }
         public TicBoard Board { get; private set; }
         public TicMatchState State { get; private set; }
@@ -13,9 +13,8 @@ namespace TicTacToe.Domain.Entities.MatchModule
         private string _winningSimbol;
         private const int MAX_PLAYERS = 2;
 
-        public TicMatch()
+        public TicMatch() : base()
         {
-            Id = Guid.NewGuid();
             Players = new List<TicPlayer>();
             Board = new TicBoard();
             State = TicMatchState.NOT_STARTED;
@@ -31,6 +30,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
             }
 
             Players.Add(ticPlayer);
+            Touch();
         }
 
         public void StartMatch()
@@ -41,17 +41,20 @@ namespace TicTacToe.Domain.Entities.MatchModule
             }
 
             State = TicMatchState.IN_PROGRESS;
+            Touch();
         }
 
         public void FinishMatch()
         {
             State = TicMatchState.FINISHED;
             SetScore();
+            Touch();
         }
 
         public void MakePlay(string simble, int positionX, int positionY)
         {
             Board.MarkCell(simble, positionX, positionY);
+            Touch();
         }
 
         public void IsTie()
