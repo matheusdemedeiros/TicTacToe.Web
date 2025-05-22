@@ -1,6 +1,6 @@
 ﻿using TicTacToe.Domain.SharedModule.Exceptions;
 
-namespace TicTacToe.Domain.MatchModule
+namespace TicTacToe.Domain.Entities.MatchModule
 {
     public class TicPlayer
     {
