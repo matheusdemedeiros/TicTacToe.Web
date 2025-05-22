@@ -7,7 +7,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
     {
         public string Name { get; private set; }
         public string NickName { get; private set; }
-        public string Symbol { get; set; }
+        public string Symbol { get; private set; }
 
         public TicPlayer(string name, string nickName, string symbol) : base()
         {

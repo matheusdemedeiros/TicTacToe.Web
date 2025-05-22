@@ -17,6 +17,10 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
             builder.Property(p => p.NickName)
                 .IsRequired()
                  .HasMaxLength(150);
+
+            builder.Property(p => p.Symbol)
+                .IsRequired()
+                .HasMaxLength(1);
         }
     }
 }
