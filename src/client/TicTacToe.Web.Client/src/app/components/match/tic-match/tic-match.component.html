@@ -1,13 +1,13 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-100">
   <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
 
-    <h2 class="text-xl font-bold">Partida: ABC123</h2>
-    <p class="text-gray-500 mb-4">Jogador atual: <span class="font-semibold text-black">X</span></p>
+    <h2 class="text-xl font-bold">Partida: {{currentMatch}}</h2>
+    <p class="text-gray-500 mb-4">Jogador atual: <span class="font-semibold text-black">{{currentSymbol}}</span></p>
 
     <app-tic-board></app-tic-board>
 
     <button class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition">
-      Reiniciar
+      Abandonar partida
     </button>
   </div>
 </div>
