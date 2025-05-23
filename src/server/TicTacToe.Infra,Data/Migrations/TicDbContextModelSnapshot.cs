@@ -8,7 +8,7 @@ using TicTacToe.Infra.Data.Contexts;
 
 #nullable disable
 
-namespace TicTacToe.Infra_Data.Migrations
+namespace TicTacToe.Infra.Data.Migrations
 {
     [DbContext(typeof(TicDbContext))]
     partial class TicDbContextModelSnapshot : ModelSnapshot
