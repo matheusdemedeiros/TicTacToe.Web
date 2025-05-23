@@ -1,37 +1,39 @@
 <form [formGroup]="form">
     @if (form.get('playMode')?.value === 'friend') {
-        <div class="space-y-4 animate-fade-in">
-            <label class="flex items-center space-x-2">
-                <input
-                type="radio"
-                formControlName="matchType"
-                [value]="matchTypes.CREATE"
-                class="accent-blue-500"
-                />
+    <div class="space-y-4 animate-fade-in">
+
+        <!-- Tipo de partida -->
+        <div class="p-4 border rounded-xl" [class.border-red-500]="fieldInvalid('matchType')">
+            <label class="flex items-center space-x-2 mb-2">
+                <input type="radio" formControlName="matchType" [value]="matchTypes.CREATE" class="accent-blue-500" />
                 <span>Criar nova partida</span>
             </label>
+
             <label class="flex items-center space-x-2">
-                <input
-                type="radio"
-                formControlName="matchType"
-                [value]="matchTypes.JOIN"
-                class="accent-blue-500"
-                />
+                <input type="radio" formControlName="matchType" [value]="matchTypes.JOIN" class="accent-blue-500" />
                 <span>Entrar em partida existente</span>
             </label>
-            
-            @if (form.get('matchType')?.value === matchTypes.JOIN) {
-                <input
-                formControlName="matchId"
-                type="text"
-                placeholder="ID da partida"
-                class="w-full p-3 border rounded-xl"
-                />
+
+            @if (fieldInvalid('matchType')) {
+            <p class="text-red-600 text-sm mt-1">Selecione uma opção.</p>
             }
         </div>
-    } @else {
-        <div class="text-gray-500 text-center py-8 animate-fade-in">
-            Aguarde... preparando partida contra o computador
+
+        <!-- Campo de ID da partida -->
+        @if (form.get('matchType')?.value === matchTypes.JOIN) {
+        <div>
+            <input formControlName="matchId" type="text" placeholder="ID da partida"
+                class="w-full p-3 border rounded-xl" [class.border-red-500]="fieldInvalid('matchId')" />
+            @if (fieldInvalid('matchId')) {
+            <p class="text-red-600 text-sm mt-1">Informe o ID da partida.</p>
+            }
         </div>
+        }
+
+    </div>
+    } @else {
+    <div class="text-gray-500 text-center py-8 animate-fade-in">
+        Aguarde... preparando partida contra o computador
+    </div>
     }
 </form>
