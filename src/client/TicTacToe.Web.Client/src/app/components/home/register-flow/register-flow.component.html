@@ -1,0 +1,25 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md transition duration-500 ease-in-out">
+        <h1 class="text-3xl font-bold mb-6 text-center">Jogo da Velha</h1>
+
+        <ng-container [ngSwitch]="step">
+            <app-step-one *ngSwitchCase="1" [form]="form"></app-step-one>
+            <app-step-two *ngSwitchCase="2" [form]="form"></app-step-two>
+            <app-step-three *ngSwitchCase="3" [form]="form" [matchTypes]="MatchTypes"></app-step-three>
+        </ng-container>
+
+        <div class="mt-6 flex justify-between">
+            @if (step > 1) {
+            <button (click)="previousStep()"
+                class="bg-gray-200 text-gray-700 px-6 py-2 rounded-xl hover:bg-gray-300 transition">
+                Voltar
+            </button>
+            }
+
+            <button (click)="nextStep()"
+                class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition ml-auto">
+                Avançar
+            </button>
+        </div>
+    </div>
+</div>
