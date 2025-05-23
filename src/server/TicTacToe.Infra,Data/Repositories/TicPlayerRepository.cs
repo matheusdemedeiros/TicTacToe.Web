@@ -4,7 +4,7 @@ using TicTacToe.Domain.Entities.MatchModule;
 using TicTacToe.Domain.Interfaces.MatchModule;
 using TicTacToe.Infra.Data.Contexts;
 
-namespace TicTacToe.Infra_Data.Repositories
+namespace TicTacToe.Infra.Data.Repositories
 {
     public class TicPlayerRepository : ITicPlayerRepository
     {

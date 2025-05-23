@@ -6,9 +6,9 @@ namespace TicTacToe.Infra.Data.Controllers
     [ApiController]
     public class MatchController : ControllerBase
     {
-        [HttpPost]
-        public async Task<IActionResult> CreateMatch(int id)
-        {
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateMatch(int id)
+        //{
+        //}
     }
 }

@@ -21,7 +21,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
             State = TicMatchState.NOT_STARTED;
             _winningSimbol = string.Empty;
             TicScore = new TicScore();
-            PlayMode = TicMatchType.PlayerVsPlayer; // TODO: alterar para ser dinâmico
+            PlayMode = PlayModeType.PlayerVsPlayer; // TODO: alterar para ser dinâmico
         }
 
         public void AddPlayer(TicPlayer ticPlayer)

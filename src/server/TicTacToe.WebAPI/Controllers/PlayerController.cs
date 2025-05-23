@@ -22,7 +22,7 @@ namespace TicTacToe.WebAPI.Controllers
 
             if (result.id != null)
             {
-                return Created();
+                return Created(result.id.ToString(), result);   
             }
 
             return BadRequest("Failed to create player.");
