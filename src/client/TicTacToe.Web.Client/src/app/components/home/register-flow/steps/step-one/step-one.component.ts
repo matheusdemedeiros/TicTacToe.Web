@@ -10,4 +10,9 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class StepOneComponent {
   @Input() form!: FormGroup;
+
+  public fieldInvalid(fieldName: string): boolean {
+    const control = this.form.get(fieldName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
 }
