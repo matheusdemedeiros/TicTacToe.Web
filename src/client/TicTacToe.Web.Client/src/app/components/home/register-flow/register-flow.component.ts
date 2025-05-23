@@ -51,5 +51,4 @@ export class RegisterFlowComponent {
       this.step--;
     }
   }
-
 } 
