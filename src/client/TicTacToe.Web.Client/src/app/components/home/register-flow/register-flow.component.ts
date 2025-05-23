@@ -18,6 +18,7 @@ export class RegisterFlowComponent {
   step = 1;
   form: FormGroup;
   MatchTypes = MatchTypes;
+  stepLabels = ['Seus dados', 'Modo de jogo', 'Configuração'];
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({

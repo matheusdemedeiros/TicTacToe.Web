@@ -10,4 +10,9 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class StepTwoComponent {
   @Input() form!: FormGroup;
+
+  fieldInvalid(fieldName: string): boolean {
+    const control = this.form.get(fieldName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
 }
