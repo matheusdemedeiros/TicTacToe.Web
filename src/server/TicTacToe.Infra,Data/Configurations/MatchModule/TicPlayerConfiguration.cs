@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TicTacToe.Domain.Entities.MatchModule;
 
-namespace TicTacToe.Infra_Data.Configurations.MatchModule
+namespace TicTacToe.Infra.Data.Configurations.MatchModule
 {
     public class TicPlayerConfiguration : IEntityTypeConfiguration<TicPlayer>
     {

@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D64F19E0-0404-4A7A-98C1-287FF9D26C4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Infra,Data", "TicTacToe.Infra,Data\TicTacToe.Infra,Data.csproj", "{5B9817CD-6417-4F73-8122-93DD8F7991C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Infra.Data", "TicTacToe.Infra,Data\TicTacToe.Infra.Data.csproj", "{5B9817CD-6417-4F73-8122-93DD8F7991C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TicTacToe.Application", "TicTacToe.Application\TicTacToe.Application.csproj", "{4E822953-0897-436E-B218-13D5C1862E51}"
 EndProject
