@@ -1,6 +1,31 @@
 <form [formGroup]="form">
-    <div class="space-y-4 animate-fade-in">
-        <input formControlName="fullName" type="text" placeholder="Nome completo" class="w-full p-3 border rounded-xl" />
-        <input formControlName="nickname" type="text" placeholder="Nickname" class="w-full p-3 border rounded-xl" />
+  <div class="space-y-4 animate-fade-in">
+
+    <div>
+      <input
+        formControlName="fullName"
+        type="text"
+        placeholder="Nome completo"
+        class="w-full p-3 border rounded-xl"
+        [class.border-red-500]="fieldInvalid('fullName')"
+      />
+      @if (fieldInvalid('fullName')) {
+        <p class="text-red-600 text-sm mt-1">Nome completo é obrigatório.</p>
+      }
     </div>
+
+    <div>
+      <input
+        formControlName="nickname"
+        type="text"
+        placeholder="Nickname"
+        class="w-full p-3 border rounded-xl"
+        [class.border-red-500]="fieldInvalid('nickname')"
+      />
+      @if (fieldInvalid('nickname')) {
+        <p class="text-red-600 text-sm mt-1">Nickname é obrigatório.</p>
+      }
+    </div>
+
+  </div>
 </form>
