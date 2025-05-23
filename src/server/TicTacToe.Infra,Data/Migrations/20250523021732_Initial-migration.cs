@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TicTacToe.Infra_Data.Migrations
+namespace TicTacToe.Infra.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initialmigration : Migration
