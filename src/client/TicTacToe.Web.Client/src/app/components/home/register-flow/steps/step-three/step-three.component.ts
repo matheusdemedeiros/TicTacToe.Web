@@ -12,7 +12,7 @@ export class StepThreeComponent implements OnInit {
   @Input() form!: FormGroup;
   @Input() matchTypes: any;
 
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this.form.get('matchType')?.valueChanges.subscribe(value => {
       const matchIdControl = this.form.get('matchId');
       if (value === this.matchTypes.JOIN) {
@@ -22,5 +22,10 @@ export class StepThreeComponent implements OnInit {
       }
       matchIdControl?.updateValueAndValidity();
     });
+  }
+
+  fieldInvalid(fieldName: string): boolean {
+    const control = this.form.get(fieldName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 }
