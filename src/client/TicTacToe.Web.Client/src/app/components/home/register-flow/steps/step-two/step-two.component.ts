@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -9,10 +9,10 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./step-two.component.scss']
 })
 export class StepTwoComponent {
-  @Input() form!: FormGroup;
+  form = input.required<FormGroup>();
 
-  fieldInvalid(fieldName: string): boolean {
-    const control = this.form.get(fieldName);
+  public fieldInvalid(fieldName: string): boolean {
+    const control = this.form().get(fieldName);
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
 }

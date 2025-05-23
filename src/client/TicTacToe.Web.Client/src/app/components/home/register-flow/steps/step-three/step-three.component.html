@@ -1,16 +1,16 @@
-<form [formGroup]="form">
-    @if (form.get('playMode')?.value === 'friend') {
+<form [formGroup]="form()">
+    @if (form().get('playMode')?.value === 'friend') {
     <div class="space-y-4 animate-fade-in">
 
         <!-- Tipo de partida -->
         <div class="p-4 border rounded-xl" [class.border-red-500]="fieldInvalid('matchType')">
             <label class="flex items-center space-x-2 mb-2">
-                <input type="radio" formControlName="matchType" [value]="matchTypes.CREATE" class="accent-blue-500" />
+                <input type="radio" formControlName="matchType" [value]="matchTypes().CREATE" class="accent-blue-500" />
                 <span>Criar nova partida</span>
             </label>
 
             <label class="flex items-center space-x-2">
-                <input type="radio" formControlName="matchType" [value]="matchTypes.JOIN" class="accent-blue-500" />
+                <input type="radio" formControlName="matchType" [value]="matchTypes().JOIN" class="accent-blue-500" />
                 <span>Entrar em partida existente</span>
             </label>
 
@@ -20,7 +20,7 @@
         </div>
 
         <!-- Campo de ID da partida -->
-        @if (form.get('matchType')?.value === matchTypes.JOIN) {
+        @if (form().get('matchType')?.value === matchTypes().JOIN) {
         <div>
             <input formControlName="matchId" type="text" placeholder="ID da partida"
                 class="w-full p-3 border rounded-xl" [class.border-red-500]="fieldInvalid('matchId')" />
