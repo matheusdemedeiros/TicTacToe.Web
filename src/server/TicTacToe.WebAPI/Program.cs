@@ -1,5 +1,6 @@
-using TicTacToe.Infra.Data;
+using Scalar.AspNetCore;
 using TicTacToe.Application.Services;
+using TicTacToe.Infra.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +16,9 @@ builder.Services.AddTicApplication();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.MapOpenApi();
+
+app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
 
