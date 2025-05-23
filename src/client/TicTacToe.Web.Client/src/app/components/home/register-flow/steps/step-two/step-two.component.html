@@ -1,0 +1,12 @@
+<form [formGroup]="form">
+    <div class="space-y-4 animate-fade-in">
+        <label class="flex items-center space-x-2">
+            <input type="radio" formControlName="playMode" value="computer" class="accent-blue-500" />
+            <span>Jogar contra o computador</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" formControlName="playMode" value="friend" class="accent-blue-500" />
+            <span>Jogar com um amigo</span>
+        </label>
+    </div>
+</form>

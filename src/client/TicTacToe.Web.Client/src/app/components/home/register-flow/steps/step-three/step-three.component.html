@@ -1,0 +1,37 @@
+<form [formGroup]="form">
+    @if (form.get('playMode')?.value === 'friend') {
+        <div class="space-y-4 animate-fade-in">
+            <label class="flex items-center space-x-2">
+                <input
+                type="radio"
+                formControlName="matchType"
+                [value]="matchTypes.CREATE"
+                class="accent-blue-500"
+                />
+                <span>Criar nova partida</span>
+            </label>
+            <label class="flex items-center space-x-2">
+                <input
+                type="radio"
+                formControlName="matchType"
+                [value]="matchTypes.JOIN"
+                class="accent-blue-500"
+                />
+                <span>Entrar em partida existente</span>
+            </label>
+            
+            @if (form.get('matchType')?.value === matchTypes.JOIN) {
+                <input
+                formControlName="matchId"
+                type="text"
+                placeholder="ID da partida"
+                class="w-full p-3 border rounded-xl"
+                />
+            }
+        </div>
+    } @else {
+        <div class="text-gray-500 text-center py-8 animate-fade-in">
+            Aguarde... preparando partida contra o computador
+        </div>
+    }
+</form>
