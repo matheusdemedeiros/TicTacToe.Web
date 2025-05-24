@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { RegisterFlowComponent } from "./register-flow/register-flow.component";
+import { RegisterFlowComponent } from "./shared/components/register-flow/register-flow.component";
 
 @Component({
   selector: 'app-home',

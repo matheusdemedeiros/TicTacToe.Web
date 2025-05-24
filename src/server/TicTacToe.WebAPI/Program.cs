@@ -1,6 +1,7 @@
 using Scalar.AspNetCore;
 using TicTacToe.Application.Services;
 using TicTacToe.Infra.Data;
+using TicTacToe.WebAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +13,13 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddTicPersistence(builder.Configuration);
 builder.Services.AddTicApplication();
+builder.Services.ConfigureCORS(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors("DefaultPolicy");
+
 app.MapOpenApi();
 
 app.MapScalarApiReference();

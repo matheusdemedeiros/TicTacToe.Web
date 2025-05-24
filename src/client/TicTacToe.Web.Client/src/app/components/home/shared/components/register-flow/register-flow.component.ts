@@ -1,11 +1,17 @@
 // Arquivo: register-flow.component.ts
-import { Component } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, Form } from '@angular/forms';
+
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 import { StepOneComponent } from './steps/step-one/step-one.component';
 import { StepTwoComponent } from './steps/step-two/step-two.component';
 import { StepThreeComponent } from './steps/step-three/step-three.component';
-import { MatchTypes } from '../models/match-types.enum';
+import { MatchTypes } from '../../models/match-types.enum';
+import { PlayerService } from '../../services/player.service';
+import { ICreateTicPlayerCommand, ICreateTicPlayerResponse } from '../../models/player.model';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-register-flow',
@@ -14,13 +20,18 @@ import { MatchTypes } from '../models/match-types.enum';
   templateUrl: './register-flow.component.html',
   styleUrls: ['./register-flow.component.scss']
 })
-export class RegisterFlowComponent {
+export class RegisterFlowComponent implements OnDestroy {
   step = 1;
   form: FormGroup;
   MatchTypes = MatchTypes;
   stepLabels = ['Seus dados', 'Modo de jogo', 'Configuração'];
+  private fb: FormBuilder;
+  private playerService: PlayerService;
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
+    this.fb = inject(FormBuilder);
+    this.playerService = inject(PlayerService);
+
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       nickname: ['', Validators.required],
@@ -28,6 +39,9 @@ export class RegisterFlowComponent {
       matchType: [''],
       matchId: ['']
     });
+  }
+
+  ngOnDestroy(): void {
   }
 
   nextStep(): void {
@@ -50,5 +64,27 @@ export class RegisterFlowComponent {
     if (this.step > 1) {
       this.step--;
     }
+  }
+  public finish(): void {
+    this.createPlayer();
+  }
+
+  public createPlayer(): void {
+    const createPlayerCommand: ICreateTicPlayerCommand = {
+      name: this.form.get('fullName')!.value,
+      nickName: this.form.get('nickname')!.value
+    }
+
+    this.playerService.create(createPlayerCommand)
+      .pipe(take(1))
+      .subscribe({
+        next: (response: ICreateTicPlayerResponse) => {
+          console.log('response', response);
+        },
+        error: (error: any) => {
+          console.log('error', error);
+        },
+      });
+    ;
   }
 } 
