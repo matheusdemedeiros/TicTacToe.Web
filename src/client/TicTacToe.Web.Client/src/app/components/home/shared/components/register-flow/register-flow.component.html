@@ -31,11 +31,17 @@
                 Voltar
             </button>
             }
-
+            @if (step < 3) {
             <button (click)="nextStep()"
                 class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition ml-auto">
                 Avançar
             </button>
+            }@else{
+            <button (click)="finish()"
+                class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition ml-auto">
+                Concluir
+            </button>
+            }
         </div>
     </div>
 </div>
