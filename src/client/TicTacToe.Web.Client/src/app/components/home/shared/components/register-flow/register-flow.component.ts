@@ -1,9 +1,9 @@
 // Arquivo: register-flow.component.ts
 import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, Form } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { take } from 'rxjs';
 
 import { StepOneComponent } from './steps/step-one/step-one.component';
 import { StepTwoComponent } from './steps/step-two/step-two.component';
@@ -11,7 +11,7 @@ import { StepThreeComponent } from './steps/step-three/step-three.component';
 import { MatchTypes } from '../../models/match-types.enum';
 import { PlayerService } from '../../services/player.service';
 import { ICreateTicPlayerCommand, ICreateTicPlayerResponse } from '../../models/player.model';
-import { take } from 'rxjs';
+import { IFormStep, MultiStepFormManager } from './multi-steps-form';
 
 @Component({
   selector: 'app-register-flow',
@@ -21,17 +21,19 @@ import { take } from 'rxjs';
   styleUrls: ['./register-flow.component.scss']
 })
 export class RegisterFlowComponent implements OnDestroy {
-  step = 1;
-  form: FormGroup;
-  MatchTypes = MatchTypes;
-  stepLabels = ['Seus dados', 'Modo de jogo', 'Configuração'];
+  public currentStepNumber = 0;
+  public currentFormStep: IFormStep;
+  public registerFormSteps: IFormStep[];
+  public form: FormGroup;
+  public MatchTypes = MatchTypes;
+  public multiStepFormManager: MultiStepFormManager;
+
   private fb: FormBuilder;
   private playerService: PlayerService;
 
   constructor() {
     this.fb = inject(FormBuilder);
     this.playerService = inject(PlayerService);
-
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       nickname: ['', Validators.required],
@@ -39,33 +41,21 @@ export class RegisterFlowComponent implements OnDestroy {
       matchType: [''],
       matchId: ['']
     });
+    this.multiStepFormManager = inject(MultiStepFormManager);
+    this.registerFormSteps = this.multiStepFormManager.steps;
+    this.currentFormStep = this.multiStepFormManager.currentFormStep;
+    this.currentStepNumber = this.multiStepFormManager.currentStepNumber;
   }
 
-  ngOnDestroy(): void {
+  public onNextStep(): void {
+    this.updateSteps();
   }
 
-  nextStep(): void {
-    if (this.step === 1 && this.form.get('fullName')?.valid && this.form.get('nickname')?.valid) {
-      this.step++;
-    } else if (this.step === 2 && this.form.get('playMode')?.valid) {
-      this.step++;
-    } else if (this.step === 3 && this.form.get('playMode')?.value === 'friend') {
-      const matchTypeValid = this.form.get('matchType')?.valid;
-      const matchIdValid = this.form.get('matchType')?.value === MatchTypes.JOIN
-        ? this.form.get('matchId')?.valid
-        : true;
-      if (matchTypeValid && matchIdValid) {
-        // Ready to submit or redirect
-      }
-    }
+  public onPreviousStep(): void {
+    this.updateSteps(true);
   }
 
-  previousStep(): void {
-    if (this.step > 1) {
-      this.step--;
-    }
-  }
-  public finish(): void {
+  public onCompleteForm(): void {
     this.createPlayer();
   }
 
@@ -86,5 +76,19 @@ export class RegisterFlowComponent implements OnDestroy {
         },
       });
     ;
+  }
+
+  public ngOnDestroy(): void {
+  }
+
+  private updateSteps(previous: boolean = false): void {
+    if (previous) {
+      this.multiStepFormManager.previousStep();
+    } else {
+      this.multiStepFormManager.nextStep(this.form);
+    }
+
+    this.currentFormStep = this.multiStepFormManager.currentFormStep;
+    this.currentStepNumber = this.multiStepFormManager.currentStepNumber;
   }
 } 
