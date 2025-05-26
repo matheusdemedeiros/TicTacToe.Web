@@ -1,7 +1,7 @@
-import { PlayModeType } from "./play-mode.enum"
+import { PlayModeTypes } from "./play-mode-types.enum"
 
 export interface ICreateTicMatchCommand {
-    playMode: PlayModeType,
+    playMode: PlayModeTypes,
     initialPlayerId: string
 }
 

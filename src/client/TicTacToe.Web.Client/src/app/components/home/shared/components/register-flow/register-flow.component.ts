@@ -11,8 +11,9 @@ import { MatchTypes } from '../../models/match-types.enum';
 import { PlayerService } from '../../services/player.service';
 import { ICreateTicPlayerCommand, ICreateTicPlayerResponse } from '../../models/player.model';
 import { IFormStep, MultiStepFormManager } from './multi-steps-form';
-import { ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
 import { MatchService } from '../../services/match.service';
+import { ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
+import { PlayModeTypes } from '../../models/play-mode-types.enum';
 
 @Component({
   selector: 'app-register-flow',
@@ -27,6 +28,7 @@ export class RegisterFlowComponent implements OnDestroy {
   public registerFormSteps: IFormStep[];
   public form: FormGroup;
   public MatchTypes = MatchTypes;
+  public PlayModeTypes = PlayModeTypes;
   public multiStepFormManager: MultiStepFormManager;
 
   private fb: FormBuilder;
@@ -40,7 +42,7 @@ export class RegisterFlowComponent implements OnDestroy {
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       nickname: ['', Validators.required],
-      playMode: ['', Validators.required],
+      playMode: [PlayModeTypes.PlayerVsPlayer, Validators.required],
       matchType: [''],
       matchId: ['']
     });
@@ -59,7 +61,7 @@ export class RegisterFlowComponent implements OnDestroy {
   }
 
   public onCompleteForm(): void {
-    this.createPlayer();
+    // this.createPlayer();
     this.createMatch();
   }
 
