@@ -11,6 +11,8 @@ import { MatchTypes } from '../../models/match-types.enum';
 import { PlayerService } from '../../services/player.service';
 import { ICreateTicPlayerCommand, ICreateTicPlayerResponse } from '../../models/player.model';
 import { IFormStep, MultiStepFormManager } from './multi-steps-form';
+import { ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
+import { MatchService } from '../../services/match.service';
 
 @Component({
   selector: 'app-register-flow',
@@ -29,10 +31,12 @@ export class RegisterFlowComponent implements OnDestroy {
 
   private fb: FormBuilder;
   private playerService: PlayerService;
+  private matchService: MatchService;
 
   constructor() {
     this.fb = inject(FormBuilder);
     this.playerService = inject(PlayerService);
+    this.matchService = inject(MatchService);
     this.form = this.fb.group({
       fullName: ['', Validators.required],
       nickname: ['', Validators.required],
@@ -56,6 +60,7 @@ export class RegisterFlowComponent implements OnDestroy {
 
   public onCompleteForm(): void {
     this.createPlayer();
+    this.createMatch();
   }
 
   public createPlayer(): void {
@@ -68,6 +73,25 @@ export class RegisterFlowComponent implements OnDestroy {
       .pipe(take(1))
       .subscribe({
         next: (response: ICreateTicPlayerResponse) => {
+          console.log('response', response);
+        },
+        error: (error: any) => {
+          console.log('error', error);
+        },
+      });
+    ;
+  }
+
+  public createMatch(initialPlayerId: string = ''): void {
+    const createMatchCommand: ICreateTicMatchCommand = {
+      playMode: this.form.get('playMode')!.value,
+      initialPlayerId: initialPlayerId
+    }
+
+    this.matchService.create(createMatchCommand)
+      .pipe(take(1))
+      .subscribe({
+        next: (response: ICreateTicMatchResponse) => {
           console.log('response', response);
         },
         error: (error: any) => {
