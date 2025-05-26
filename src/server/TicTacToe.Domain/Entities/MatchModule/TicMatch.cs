@@ -6,9 +6,9 @@ namespace TicTacToe.Domain.Entities.MatchModule
     public class TicMatch : BaseEntity
     {
         public List<TicPlayer> Players { get; private set; }
-        public TicBoard Board { get; private set; }
+        public virtual TicBoard Board { get; private set; }
         public TicMatchState State { get; private set; }
-        public TicScore TicScore { get; private set; }
+        public virtual TicScore TicScore { get; private set; }
         public PlayModeType PlayMode { get; private set; }
 
         public Guid TicScoreId { get; set; }
@@ -23,7 +23,11 @@ namespace TicTacToe.Domain.Entities.MatchModule
             State = TicMatchState.NOT_STARTED;
             _winningSimbol = string.Empty;
             TicScore = new TicScore();
-            PlayMode = PlayModeType.PlayerVsPlayer; // TODO: alterar para ser dinâmico
+        }
+
+        public TicMatch(PlayModeType playMode) : this()
+        {
+            PlayMode = playMode;
         }
 
         public void AddPlayer(TicPlayer ticPlayer)
