@@ -8,6 +8,8 @@
         private const int MAX_WIDTH = 3;
         private const int MAX_HEIGHT = 3;
 
+        public TicBoardCell[,] Board { get => _board; }
+
         public TicBoard()
         {
             _board = new TicBoardCell[MAX_WIDTH, MAX_HEIGHT];

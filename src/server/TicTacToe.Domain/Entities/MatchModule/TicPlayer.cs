@@ -9,6 +9,8 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public string NickName { get; private set; }
         public string Symbol { get; private set; }
 
+        public virtual List<TicMatch> Matches { get; set; }
+
         public TicPlayer(string name, string nickName, string symbol) : base()
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(nickName))

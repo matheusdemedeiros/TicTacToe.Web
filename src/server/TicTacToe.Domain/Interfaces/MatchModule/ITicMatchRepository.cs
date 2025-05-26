@@ -4,10 +4,10 @@ namespace TicTacToe.Domain.Interfaces.MatchModule
 {
     public interface ITicMatchRepository
     {
-        Task<bool> CreateAsync(TicMatch match);
-        Task<TicMatch> RetrieveByIdAsync(Guid id);
+        Task CreateAsync(TicMatch match);
+        Task<TicMatch?> RetrieveByIdAsync(Guid id);
         Task<List<TicMatch>> RetrieveAllAsync();
-        Task<bool> UpdateAsync(TicMatch match);
-        Task<bool> DeleteAsync(Guid id);
+        Task UpdateAsync(TicMatch match);
+        Task DeleteAsync(Guid id);
     }
 }
