@@ -1,4 +1,4 @@
-export enum PlayModeType {
+export enum PlayModeTypes {
     PlayerVsPlayer = 0,
     PlayerVsComputer = 1
 }
