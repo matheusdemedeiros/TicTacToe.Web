@@ -1,6 +1,6 @@
 ﻿namespace TicTacToe.Application.UseCases.Match.CreateMatch
 {
-    public record CreateMatchResponse
+    public record CreateTicMatchResponse(Guid MatchId)
     {
     }
 }
