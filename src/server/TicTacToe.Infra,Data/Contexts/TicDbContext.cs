@@ -5,7 +5,7 @@ namespace TicTacToe.Infra.Data.Contexts
 {
     public class TicDbContext : DbContext
     {
-        //public DbSet<TicMatch> Matches { get; set; }
+        public DbSet<TicMatch> Matches { get; set; }
         public DbSet<TicPlayer> Players { get; set; }
 
         public TicDbContext(DbContextOptions<TicDbContext> options) : base(options)
