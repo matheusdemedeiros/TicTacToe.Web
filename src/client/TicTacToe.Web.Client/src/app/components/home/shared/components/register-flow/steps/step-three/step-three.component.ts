@@ -1,6 +1,7 @@
 import { Component, input, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PlayModeTypes } from '../../../../models/play-mode-types.enum';
+import { MatchTypes } from '../../../../models/match-types.enum';
 
 @Component({
   selector: 'app-step-three',
@@ -11,13 +12,13 @@ import { PlayModeTypes } from '../../../../models/play-mode-types.enum';
 })
 export class StepThreeComponent implements OnInit {
   form = input.required<FormGroup>();
-  matchTypes = input.required<any>();
+  matchTypes = MatchTypes;
   playModeTypes = PlayModeTypes;
 
   ngOnInit(): void {
     this.form().get('matchType')?.valueChanges.subscribe(value => {
       const matchIdControl = this.form().get('matchId');
-      if (value === this.matchTypes().JOIN) {
+      if (value === this.matchTypes.JOIN) {
         matchIdControl?.setValidators([Validators.required]);
       } else {
         matchIdControl?.clearValidators();

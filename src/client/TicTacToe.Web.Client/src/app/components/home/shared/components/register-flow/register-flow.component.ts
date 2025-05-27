@@ -27,8 +27,6 @@ export class RegisterFlowComponent implements OnDestroy {
   public currentFormStep: IFormStep;
   public registerFormSteps: IFormStep[];
   public form: FormGroup;
-  public MatchTypes = MatchTypes;
-  public PlayModeTypes = PlayModeTypes;
   public multiStepFormManager: MultiStepFormManager;
 
   private fb: FormBuilder;
@@ -43,7 +41,7 @@ export class RegisterFlowComponent implements OnDestroy {
       fullName: ['', Validators.required],
       nickname: ['', Validators.required],
       playMode: [PlayModeTypes.PlayerVsPlayer, Validators.required],
-      matchType: [''],
+      matchType: [MatchTypes.CREATE],
       matchId: ['']
     });
     this.multiStepFormManager = inject(MultiStepFormManager);
@@ -53,6 +51,7 @@ export class RegisterFlowComponent implements OnDestroy {
   }
 
   public onNextStep(): void {
+    console.log(this.form)
     this.updateSteps();
   }
 

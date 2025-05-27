@@ -22,7 +22,7 @@
         <ng-container [ngSwitch]="currentStepNumber">
             <app-step-one *ngSwitchCase="0" [form]="form" />
             <app-step-two *ngSwitchCase="1" [form]="form" />
-            <app-step-three *ngSwitchCase="2" [form]="form" [matchTypes]="MatchTypes" />
+            <app-step-three *ngSwitchCase="2" [form]="form" />
         </ng-container>
 
         <div class="mt-6 flex justify-between">
