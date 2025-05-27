@@ -1,4 +1,5 @@
-﻿using TicTacToe.Domain.Entities.MatchModule;
+﻿using System.Linq.Expressions;
+using TicTacToe.Domain.Entities.MatchModule;
 
 namespace TicTacToe.Domain.Interfaces.MatchModule
 {
@@ -9,5 +10,6 @@ namespace TicTacToe.Domain.Interfaces.MatchModule
         Task<List<TicMatch>> RetrieveAllAsync();
         Task UpdateAsync(TicMatch match);
         Task DeleteAsync(Guid id);
+        Task<bool> HasAnyWithConditionAsync(Expression<Func<TicMatch, bool>> condition);
     }
 }
