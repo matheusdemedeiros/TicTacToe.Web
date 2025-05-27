@@ -1,6 +1,7 @@
 import { FormGroup } from '@angular/forms';
 import { MatchTypes } from '../../models/match-types.enum';
 import { Injectable } from '@angular/core';
+import { PlayModeTypes } from '../../models/play-mode-types.enum';
 
 export interface IFormStep {
     stepNumber: number;
@@ -47,7 +48,7 @@ export const registerFormSteps: IFormStep[] = [
         isValid: (form: FormGroup) => {
             const playModeValue = form.get('playMode')!.value;
 
-            if (playModeValue !== 'friend') {
+            if (playModeValue !== PlayModeTypes.PlayerVsPlayer) {
                 return true;
             }
 
