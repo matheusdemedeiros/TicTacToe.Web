@@ -4,7 +4,7 @@ using TicTacToe.Domain.Interfaces.MatchModule;
 
 namespace TicTacToe.Application.UseCases.Match.AddPlayer
 {
-    public class AddTicPlayerToMatchHandler : IRequestHandler<AddTicPlayerToMatchCommand, AddTicPlayerPlayerToMatchResponse>
+    public class AddTicPlayerToMatchHandler : IRequestHandler<AddTicPlayerToMatchCommand, AddTicPlayerToMatchResponse>
     {
         private readonly ITicMatchRepository _matchRepository;
         private readonly ITicPlayerRepository _playerRepository;
@@ -21,7 +21,7 @@ namespace TicTacToe.Application.UseCases.Match.AddPlayer
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<AddTicPlayerPlayerToMatchResponse> Handle(AddTicPlayerToMatchCommand request, CancellationToken cancellationToken)
+        public async Task<AddTicPlayerToMatchResponse> Handle(AddTicPlayerToMatchCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.PlayerId) || string.IsNullOrEmpty(request.MatchId))
             {
@@ -50,7 +50,7 @@ namespace TicTacToe.Application.UseCases.Match.AddPlayer
 
             await _unitOfWork.CommitAsync();
 
-            var response = new AddTicPlayerPlayerToMatchResponse
+            var response = new AddTicPlayerToMatchResponse
             {
                 MatchId = match.Id,
                 PlayerId = player.Id,

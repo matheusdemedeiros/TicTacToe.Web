@@ -1,6 +1,6 @@
 ﻿namespace TicTacToe.Application.UseCases.Match.AddPlayer
 {
-    public record AddTicPlayerPlayerToMatchResponse
+    public record AddTicPlayerToMatchResponse
     {
         /// <summary>
         /// Identifier for the match to which the player was added.
