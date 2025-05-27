@@ -8,7 +8,8 @@ import {
   IAddTicPlayerToMatchCommand,
   ICreateTicMatchCommand,
   ICreateTicMatchResponse,
-  IAddTicPlayerToMatchResponse as IAddTicPlayerToMatchResponse
+  IAddTicPlayerToMatchResponse,
+  IRetrieveTicMatchByIdResponse
 } from '../models/match.model';
 
 @Injectable({
@@ -24,6 +25,10 @@ export class MatchService {
   }
 
   public addPlayer(command: IAddTicPlayerToMatchCommand, matchId: string): Observable<IAddTicPlayerToMatchResponse> {
-    return this.http.post<IAddTicPlayerToMatchResponse>(this.apiUrl + `/match/{matchId}/add-player`, command);
+    return this.http.post<IAddTicPlayerToMatchResponse>(this.apiUrl + `/match/${matchId}/add-player`, command);
+  }
+
+  public retrieveById(matchId: string): Observable<IRetrieveTicMatchByIdResponse> {
+    return this.http.get<IRetrieveTicMatchByIdResponse>(this.apiUrl + `/match/${matchId}`);
   }
 }
