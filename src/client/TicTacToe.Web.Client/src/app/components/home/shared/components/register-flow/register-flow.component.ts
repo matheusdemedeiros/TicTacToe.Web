@@ -12,7 +12,7 @@ import { PlayerService } from '../../services/player.service';
 import { ICreateTicPlayerCommand, ICreateTicPlayerResponse } from '../../models/player.model';
 import { IFormStep, MultiStepFormManager } from './multi-steps-form';
 import { MatchService } from '../../services/match.service';
-import { ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
+import { IAddTicPlayerToMatchCommand, IAddTicPlayerToMatchResponse, ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
 import { PlayModeTypes } from '../../models/play-mode-types.enum';
 
 @Component({
@@ -93,6 +93,27 @@ export class RegisterFlowComponent implements OnDestroy {
       .pipe(take(1))
       .subscribe({
         next: (response: ICreateTicMatchResponse) => {
+          console.log('response', response);
+        },
+        error: (error: any) => {
+          console.log('error', error);
+        },
+      });
+    ;
+  }
+
+  public addPlayer(): void {
+    const playerId = '';
+    const matchId = this.form.get('matchId')!.value;
+    const addPlayerCommand: IAddTicPlayerToMatchCommand = {
+      matchId: matchId,
+      playerId: playerId
+    }
+
+    this.matchService.addPlayer(addPlayerCommand, matchId)
+      .pipe(take(1))
+      .subscribe({
+        next: (response: IAddTicPlayerToMatchResponse) => {
           console.log('response', response);
         },
         error: (error: any) => {
