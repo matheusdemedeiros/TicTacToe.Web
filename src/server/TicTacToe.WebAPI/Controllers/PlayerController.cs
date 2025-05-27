@@ -15,7 +15,14 @@ namespace TicTacToe.WebAPI.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Create a new TicTacToe player.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(typeof(CreateTicPlayerResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePlayerAsync(CreateTicPlayerCommand command)
         {
             var result = await _mediator.Send(command);
