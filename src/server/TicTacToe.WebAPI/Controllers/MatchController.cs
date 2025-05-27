@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TicTacToe.Application.UseCases.Match.AddPlayer;
 using TicTacToe.Application.UseCases.Match.CreateMatch;
+using TicTacToe.Application.UseCases.Match.RetriveMatchById;
 
 namespace TicTacToe.Infra.Data.Controllers
 {
@@ -56,6 +57,26 @@ namespace TicTacToe.Infra.Data.Controllers
             }
 
             return BadRequest("Failed to add player.");
+        }
+
+        /// <summary>
+        /// Retrieve a TicTacToe match by its ID.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <returns></returns>
+        [HttpGet("/{matchId}")]
+        [ProducesResponseType(typeof(RetrieveTicMatchByIdResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RetrieveMatchByIdAsync(Guid matchId)
+        {
+            var command = new RetriveTicMatchByIdQuery() { MatchId = matchId };
+            var result = await _mediator.Send(command);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest("Failed to retrive match.");
         }
     }
 }
