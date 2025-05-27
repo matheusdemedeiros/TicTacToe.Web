@@ -11,8 +11,6 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public virtual TicScore TicScore { get; private set; }
         public PlayModeType PlayMode { get; private set; }
 
-        public Guid TicScoreId { get; set; }
-
         private string _winningSimbol;
         private const int MAX_PLAYERS = 2;
 
