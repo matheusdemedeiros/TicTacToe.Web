@@ -8,3 +8,15 @@ export interface ICreateTicMatchCommand {
 export interface ICreateTicMatchResponse {
     matchId: string,
 }
+
+export interface IAddTicPlayerToMatchCommand {
+    playerId: string;
+    matchId: string;
+}
+
+export interface IAddTicPlayerToMatchResponse {
+    matchId: string;
+    playerId: string;
+    playerName: string;
+    nickname: string;
+}
