@@ -43,7 +43,7 @@ namespace TicTacToe.Infra.Data.Controllers
         /// <param name="command">Command</param>
         /// <returns></returns>
         [HttpPost("/{matchId}/add-player")]
-        [ProducesResponseType(typeof(AddTicPlayerPlayerResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AddTicPlayerPlayerToMatchResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddPlayer(Guid matchId, AddTicPlayerToMatchCommand command)
         {
