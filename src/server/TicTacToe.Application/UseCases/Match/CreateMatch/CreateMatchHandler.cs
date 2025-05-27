@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using TicTacToe.Application.UseCases.Match.CreatePlayer;
 using TicTacToe.Domain.Entities.MatchModule;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
@@ -18,9 +17,9 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
             IUnitOfWork unitOfWork
             )
         {
-            ticPlayerRepository = ticPlayerRepository;
-            ticMatchRepository = ticMatchRepository;
-            unitOfWork = unitOfWork;
+            _ticPlayerRepository = ticPlayerRepository;
+            _ticMatchRepository = ticMatchRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CreateTicMatchResponse> Handle(CreateTicMatchCommand request, CancellationToken cancellationToken)
@@ -40,12 +39,17 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
 
         private async Task AddInitialPlayerIfExists(CreateTicMatchCommand request, TicMatch ticMatch)
         {
-            if (!request.InitialPlayerId.HasValue)
+            if (string.IsNullOrEmpty(request.InitialPlayerId))
+            {
+                return;
+            }
+            var initialPlayerId = Guid.Parse(request.InitialPlayerId);
+            if (initialPlayerId == Guid.Empty)
             {
                 return;
             }
 
-            var initialPlayer = await _ticPlayerRepository.RetrieveByIdAsync(request.InitialPlayerId.Value);
+            var initialPlayer = await _ticPlayerRepository.RetrieveByIdAsync(initialPlayerId);
 
             if (initialPlayer == null)
             {
