@@ -9,7 +9,7 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
         public void Configure(EntityTypeBuilder<TicScore> builder)
         {
             builder.ToTable("TicScores");
-            
+
             builder.HasKey(p => p.Id);
 
             builder.Property(x => x.WinningSymbol)
@@ -19,11 +19,10 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
             builder.Property(x => x.Tie)
                     .IsRequired();
 
-            builder.HasOne(x => x.Match)
-                .WithOne(x => x.TicScore)
-                .HasForeignKey<TicScore>(x => x.MatchId)
+            builder.HasOne(s => s.Match)
+                .WithOne(m => m.TicScore)
+                .HasForeignKey<TicScore>(s => s.MatchId)
                 .OnDelete(DeleteBehavior.NoAction);
-
         }
     }
 }

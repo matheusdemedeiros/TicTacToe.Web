@@ -18,7 +18,6 @@ namespace TicTacToe.Infra.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     State = table.Column<int>(type: "int", nullable: false),
                     PlayMode = table.Column<int>(type: "int", nullable: false),
-                    TicScoreId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Board = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -58,9 +57,9 @@ namespace TicTacToe.Infra.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WinningSymbol = table.Column<string>(type: "nvarchar(1)", maxLength: 1, nullable: true),
+                    WinningPlayerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Tie = table.Column<bool>(type: "bit", nullable: false),
                     MatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TicPlayerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
@@ -73,11 +72,10 @@ namespace TicTacToe.Infra.Data.Migrations
                         principalTable: "TicMatches",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_TicScores_TicPlayers_TicPlayerId",
-                        column: x => x.TicPlayerId,
+                        name: "FK_TicScores_TicPlayers_WinningPlayerId",
+                        column: x => x.WinningPlayerId,
                         principalTable: "TicPlayers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -92,9 +90,9 @@ namespace TicTacToe.Infra.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicScores_TicPlayerId",
+                name: "IX_TicScores_WinningPlayerId",
                 table: "TicScores",
-                column: "TicPlayerId");
+                column: "WinningPlayerId");
         }
 
         /// <inheritdoc />

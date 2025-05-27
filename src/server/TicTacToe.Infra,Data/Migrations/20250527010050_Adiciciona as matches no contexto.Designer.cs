@@ -12,7 +12,7 @@ using TicTacToe.Infra.Data.Contexts;
 namespace TicTacToe.Infra.Data.Migrations
 {
     [DbContext(typeof(TicDbContext))]
-    [Migration("20250526230339_Adiciciona as matches no contexto")]
+    [Migration("20250527010050_Adiciciona as matches no contexto")]
     partial class Adicicionaasmatchesnocontexto
     {
         /// <inheritdoc />
@@ -54,9 +54,6 @@ namespace TicTacToe.Infra.Data.Migrations
 
                     b.Property<int>("State")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("TicScoreId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -110,14 +107,14 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.Property<Guid>("MatchId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TicPlayerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("Tie")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("WinningPlayerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("WinningSymbol")
                         .HasMaxLength(1)
@@ -128,7 +125,7 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.HasIndex("MatchId")
                         .IsUnique();
 
-                    b.HasIndex("TicPlayerId");
+                    b.HasIndex("WinningPlayerId");
 
                     b.ToTable("TicScores", (string)null);
                 });
@@ -185,9 +182,7 @@ namespace TicTacToe.Infra.Data.Migrations
 
                     b.HasOne("TicTacToe.Domain.Entities.MatchModule.TicPlayer", "WinningPlayer")
                         .WithMany()
-                        .HasForeignKey("TicPlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("WinningPlayerId");
 
                     b.Navigation("Match");
 

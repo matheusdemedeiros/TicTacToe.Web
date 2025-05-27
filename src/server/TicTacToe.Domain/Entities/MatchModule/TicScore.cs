@@ -10,7 +10,6 @@ namespace TicTacToe.Domain.Entities.MatchModule
 
         public virtual TicMatch Match { get; set; }
         public Guid MatchId { get; set; }
-        public Guid TicPlayerId { get; set; }
 
         public TicScore() : base()
         {
