@@ -38,7 +38,7 @@ namespace TicTacToe.Application.UseCases.Match.AddPlayer
             }
 
             var matchExists = await _matchRepository.HasAnyWithConditionAsync(match => match.Id == matchId);
-            if (!playerExists)
+            if (!matchExists)
             {
                 return null;
             }
