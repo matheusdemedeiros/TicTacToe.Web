@@ -2,6 +2,7 @@ using Scalar.AspNetCore;
 using TicTacToe.Application.Services;
 using TicTacToe.Infra.Data;
 using TicTacToe.WebAPI.Extensions;
+using TicTacToe.WebAPI.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +14,15 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddTicPersistence(builder.Configuration);
 builder.Services.AddTicApplication();
-builder.Services.ConfigureCORS(builder.Configuration);
+builder.Services.AddCORSConfig(builder.Configuration);
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseCors("DefaultPolicy");
+app.UseCORSConfig();
+
+app.MapHub<TicMatchHub>("/Ticmatchhub");
 
 app.MapOpenApi();
 
