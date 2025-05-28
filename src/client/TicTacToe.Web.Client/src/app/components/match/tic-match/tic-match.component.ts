@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 
 @Component({
@@ -9,8 +11,18 @@ import { TicBoardComponent } from '../tic-board/tic-board.component';
   styleUrl: './tic-match.component.scss'
 })
 export class TicMatchComponent implements OnInit {
-  currentSymbol: string = 'O';
-  currentMatch: string = '123ABC';
+  protected currentSymbol: string = 'O';
+  protected currentMatchId: string = '';
+  protected currentPlayerId: string = '';
 
-  public ngOnInit(): void { }
+  private route: ActivatedRoute;
+
+  constructor() {
+    this.route = inject(ActivatedRoute);
+  }
+
+  public ngOnInit(): void {
+    this.currentMatchId = this.route.snapshot.queryParamMap.get('ticMatchId')!;
+    this.currentMatchId = this.route.snapshot.queryParamMap.get('ticPlayerId')!;
+  }
 }
