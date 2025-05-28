@@ -23,6 +23,6 @@ export class TicMatchComponent implements OnInit {
 
   public ngOnInit(): void {
     this.currentMatchId = this.route.snapshot.queryParamMap.get('ticMatchId')!;
-    this.currentMatchId = this.route.snapshot.queryParamMap.get('ticPlayerId')!;
+    this.currentPlayerId = this.route.snapshot.queryParamMap.get('ticPlayerId')!;
   }
 }
