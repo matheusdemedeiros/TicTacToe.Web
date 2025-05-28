@@ -163,9 +163,7 @@ export class RegisterFlowComponent implements OnDestroy {
         }))
       .subscribe({
         next: (response: any) => {
-
-          console.log('success', response)
-          this.router.navigate([this.successRoute])
+          this.navigateOnSuccess();
         },
         error: (error: any) => console.log('error', error)
       });
@@ -185,12 +183,19 @@ export class RegisterFlowComponent implements OnDestroy {
         }))
       .subscribe({
         next: (response: any) => {
-          debugger;
-          console.log('success', response)
-          this.router.navigate([this.successRoute])
+          this.navigateOnSuccess();
         },
         error: (error: Error) => console.log('error', error)
       });
+  }
+
+  private navigateOnSuccess(): void {
+    this.router.navigate([this.successRoute], {
+      queryParams: {
+        ticMatchId: this.ticMatchId,
+        ticPlayerId: this.ticPlayerId
+      }
+    });
   }
 
   /*
