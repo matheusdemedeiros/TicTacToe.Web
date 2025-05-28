@@ -43,7 +43,7 @@ namespace TicTacToe.Infra.Data.Controllers
         /// <param name="matchId">Id from match to add player.</param>
         /// <param name="command">Command</param>
         /// <returns></returns>
-        [HttpPost("/{matchId}/add-player")]
+        [HttpPost("{matchId:guid}/add-player")]
         [ProducesResponseType(typeof(AddTicPlayerToMatchResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddPlayer(Guid matchId, AddTicPlayerToMatchCommand command)
@@ -64,7 +64,7 @@ namespace TicTacToe.Infra.Data.Controllers
         /// </summary>
         /// <param name="matchId"></param>
         /// <returns></returns>
-        [HttpGet("/{matchId}")]
+        [HttpGet("{matchId:guid}")]
         [ProducesResponseType(typeof(RetrieveTicMatchByIdResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RetrieveMatchByIdAsync(Guid matchId)
