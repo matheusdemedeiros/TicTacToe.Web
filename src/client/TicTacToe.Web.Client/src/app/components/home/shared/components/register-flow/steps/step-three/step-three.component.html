@@ -3,19 +3,19 @@
     <div class="space-y-4 animate-fade-in">
 
         <!-- Tipo de partida -->
-        <div class="p-4 border rounded-xl" [class.border-red-500]="fieldInvalid('matchType')">
-            <label class="flex items-center space-x-2 mb-2">
-                <input type="radio" formControlName="matchType" [value]="matchTypes.CREATE" class="accent-blue-500" />
+        <div class="p-4 border rounded-xl" [class.border-indigo-500]="fieldInvalid('matchType')">
+            <label class="flex items-center space-x-2 mb-2 text-white">
+                <input type="radio" formControlName="matchType" [value]="matchTypes.CREATE" class="accent-indigo-500" />
                 <span>Criar nova partida</span>
             </label>
 
-            <label class="flex items-center space-x-2">
-                <input type="radio" formControlName="matchType" [value]="matchTypes.JOIN" class="accent-blue-500" />
+            <label class="flex items-center space-x-2 text-white">
+                <input type="radio" formControlName="matchType" [value]="matchTypes.JOIN" class="accent-indigo-500" />
                 <span>Entrar em partida existente</span>
             </label>
 
             @if (fieldInvalid('matchType')) {
-            <p class="text-red-600 text-sm mt-1">Selecione uma opção.</p>
+            <p class="text-indigo-500 text-sm mt-1">Selecione uma opção.</p>
             }
         </div>
 
@@ -23,16 +23,16 @@
         @if (form().get('matchType')?.value === matchTypes.JOIN) {
         <div>
             <input formControlName="matchId" type="text" placeholder="ID da partida"
-                class="w-full p-3 border rounded-xl" [class.border-red-500]="fieldInvalid('matchId')" />
+                class="w-full p-3 border rounded-xl text-white" [class.border-indigo-500]="fieldInvalid('matchId')" />
             @if (fieldInvalid('matchId')) {
-            <p class="text-red-600 text-sm mt-1">Informe o ID da partida.</p>
+            <p class="text-indigo-500 text-sm mt-1 text-indigo-500">Informe o ID da partida.</p>
             }
         </div>
         }
 
     </div>
     } @else {
-    <div class="text-gray-500 text-center py-8 animate-fade-in">
+    <div class="text-white text-center py-8 animate-fade-in">
         Aperte em 'Concluir' para jogar contra o computador...
     </div>
     }
