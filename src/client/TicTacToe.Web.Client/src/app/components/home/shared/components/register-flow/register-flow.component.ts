@@ -126,7 +126,7 @@ export class RegisterFlowComponent implements OnDestroy {
       playerId: this.ticPlayerId
     }
 
-    return this.matchService.addPlayer(addPlayerCommand, this.ticMatchId);
+    return this.matchService.addPlayer(addPlayerCommand, matchId ?? this.ticMatchId);
   }
 
   private handleMatch(): void {
@@ -182,7 +182,8 @@ export class RegisterFlowComponent implements OnDestroy {
           return this.addPlayer(matchId);
         }))
       .subscribe({
-        next: (response: any) => {
+        next: (response: IAddTicPlayerToMatchResponse) => {
+          this.ticMatchId = response.matchId;
           this.navigateOnSuccess();
         },
         error: (error: Error) => console.log('error', error)
