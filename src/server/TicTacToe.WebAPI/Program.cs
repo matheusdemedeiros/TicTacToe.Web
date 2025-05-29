@@ -25,6 +25,8 @@ builder.Services.AddSignalR(e =>
 }).AddNewtonsoftJsonProtocol(options =>
 {
     options.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+    options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
 });
 
 
