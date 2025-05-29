@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using Scalar.AspNetCore;
 using TicTacToe.Application.Services;
 using TicTacToe.Infra.Data;
@@ -8,14 +9,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddTicPersistence(builder.Configuration);
 builder.Services.AddTicApplication();
 builder.Services.AddCORSConfig(builder.Configuration);
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(e =>
+{
+    e.EnableDetailedErrors = true;
+
+    e.MaximumReceiveMessageSize = 102400000;
+}).AddNewtonsoftJsonProtocol(options =>
+{
+    options.PayloadSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+});
+
 
 var app = builder.Build();
 
