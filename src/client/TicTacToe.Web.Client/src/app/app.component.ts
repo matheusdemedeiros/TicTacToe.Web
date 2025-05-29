@@ -11,9 +11,18 @@ import { TicMatchHubService } from './components/match/shared/services/tic-match
 export class AppComponent {
   title = 'TicTacToe';
 
-  constructor (){
+  constructor() {
     const service = inject(TicMatchHubService)
-    debugger;
-    service.connect();
+    service.connect('E12294C5-AFCE-4C39-A437-4C7031072C64')
+  .then(() => {
+    if (service['hubConnection']?.state === 'Connected') {
+      service.joinMatch('E12294C5-AFCE-4C39-A437-4C7031072C64');
+      console.log('Conectado e joinMatch chamado');
+    } else {
+      console.warn('Conexão não estabelecida');
+    }
+  })
+  .catch(err => console.error('Erro ao conectar ao SignalR', err));
+
   }
 }

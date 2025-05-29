@@ -2,28 +2,37 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class TicMatchHubService {
-  private readonly hubConnection: HubConnection;
-  private readonly apiUrl: string = environment.apiUrl;
-  private readonly hubUrl: string = `${this.apiUrl}Ticmatchhub`;
+  private hubConnection?: HubConnection;
+  private readonly hubUrl = `${environment.apiUrl}Ticmatchhub`;
 
-  constructor() {
+  public connect(matchId: string): Promise<void> {
+    if (this.hubConnection?.state === 'Connected') return Promise.resolve();
+
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl)
+      .withUrl(`${this.hubUrl}?matchId=${matchId}`)
       .build();
+
+    return this.hubConnection.start();
   }
 
-  public async connect(): Promise<any> {
-    try {
-      await this.hubConnection.start();
-      console.log('signalr hub conected');
-    } catch (error: any){
-      
-      console.log('signalr throws error', error);
-    }
+  public joinMatch(matchId: string): void {
+    this.hubConnection!.invoke('JoinMatchAsync', matchId);
+
+  }
+
+  public listenPlayerJoined(): Observable<any> {
+    return new Observable((observer) => {
+      this.hubConnection?.on('TicPlayerJoined', (match) => {
+        observer.next(match);
+      });
+    });
+  }
+
+  public disconnect(): Promise<void> {
+    return this.hubConnection?.stop() ?? Promise.resolve();
   }
 }
