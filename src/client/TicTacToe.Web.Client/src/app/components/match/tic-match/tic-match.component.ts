@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 import { TicMatchHubService } from '../shared/services/tic-match-hub.service';
+import { TicMatch } from '../shared/models/tic-match.model';
 
 @Component({
   selector: 'app-tic-match',
@@ -46,7 +47,8 @@ export class TicMatchComponent implements OnInit {
 
   private onPlayerJoined(): void {
     this.ticMatchHubService.onPlayerJoined().subscribe({
-      next: (response: any) => {
+      next: (response: TicMatch) => {
+        debugger;
         console.log('response do tic event', response)
       }
     })
