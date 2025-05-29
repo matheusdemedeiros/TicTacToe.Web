@@ -15,21 +15,30 @@ namespace TicTacToe.WebAPI.Hubs
 
         public async Task JoinMatchAsync(string matchId)
         {
-            if (!Guid.TryParse(matchId, out var matchGuid))
+            try
             {
-                throw new HubException("Invalid match ID format.");
+
+                if (!Guid.TryParse(matchId, out var matchGuid))
+                {
+                    throw new HubException("Invalid match ID format.");
+                }
+
+                var groupName = $"{GroupPrefix}-{matchId}";
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+
+                var match = await _ticMatchRepository.RetrieveByIdAsync(matchGuid);
+                if (match == null)
+                {
+                    throw new HubException("Match not found.");
+                }
+
+                await Clients.Group(groupName).SendAsync("TicPlayerJoined", match);
             }
-
-            var groupName = $"{GroupPrefix}-{matchId}";
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-
-            var match = await _ticMatchRepository.RetrieveByIdAsync(matchGuid);
-            if (match == null)
+            catch (Exception ex)
             {
-                throw new HubException("Match not found.");
-            }
 
-            await Clients.Group(groupName).SendAsync("TicPlayerJoined", match);
+                throw;
+            }
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
