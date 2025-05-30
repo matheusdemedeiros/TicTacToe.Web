@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 import { TicMatchHubService } from '../shared/services/tic-match-hub.service';
 import { TicMatch } from '../shared/models/tic-match.model';
+import { IJoinMatchCommand, IJoinMatchResponse } from '../shared/services/hub-messages.model';
 
 @Component({
   selector: 'app-tic-match',
@@ -16,6 +17,8 @@ export class TicMatchComponent implements OnInit {
   protected currentSymbol: string = 'O';
   protected currentMatchId: string = '';
   protected currentPlayerId: string = '';
+
+  protected currentMatch: TicMatch | undefined;
 
   private route: ActivatedRoute;
   private ticMatchHubService: TicMatchHubService;
@@ -41,15 +44,18 @@ export class TicMatchComponent implements OnInit {
   }
 
   private connectToMatchHub(): void {
-    this.ticMatchHubService.joinMatch(this.currentMatchId);
+    const command: IJoinMatchCommand = {
+      matchId: this.currentMatchId
+    }
+    this.ticMatchHubService.joinMatch(command);
     console.log('Conectado e joinMatch chamado');
   }
 
   private onPlayerJoined(): void {
     this.ticMatchHubService.onPlayerJoined().subscribe({
-      next: (response: TicMatch) => {
-        debugger;
-        console.log('response do tic event', response)
+      next: (match: IJoinMatchResponse) => {
+        console.log('response do tic event', match)
+        // this.currentMatch = match;
       }
     })
   }
