@@ -10,6 +10,8 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public TicMatchState State { get; private set; }
         public virtual TicScore TicScore { get; private set; }
         public PlayModeType PlayMode { get; private set; }
+        public virtual TicPlayer? CurrentPlayer { get; private set; }
+        public Guid? CurrentPlayerId { get; set; }
 
         private string _winningSimbol;
         private const int MAX_PLAYERS = 2;
@@ -21,6 +23,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
             State = TicMatchState.NOT_STARTED;
             _winningSimbol = string.Empty;
             TicScore = new TicScore();
+            CurrentPlayer = null;
         }
 
         public TicMatch(PlayModeType playMode) : this()
@@ -47,6 +50,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
             }
 
             State = TicMatchState.IN_PROGRESS;
+            SwitchCurrentPlayer();
             Touch();
         }
 
@@ -60,6 +64,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public void MakePlay(string simble, int positionX, int positionY)
         {
             Board.MarkCell(simble, positionX, positionY);
+            SwitchCurrentPlayer();
             Touch();
         }
 
@@ -83,6 +88,18 @@ namespace TicTacToe.Domain.Entities.MatchModule
         private void SetScore()
         {
             TicScore.Set(_winningSimbol == string.Empty ? null : Players.FirstOrDefault(p => p.Symbol == _winningSimbol));
+        }
+
+        private void SwitchCurrentPlayer()
+        {
+            if (CurrentPlayer == null)
+            {
+                CurrentPlayer = Players.FirstOrDefault();
+            }
+            else
+            {
+                CurrentPlayer = Players.FirstOrDefault(p => p != CurrentPlayer);
+            }
         }
     }
 }
