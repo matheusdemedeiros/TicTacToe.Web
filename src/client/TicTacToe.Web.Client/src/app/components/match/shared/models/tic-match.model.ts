@@ -6,11 +6,11 @@ import { TicScore } from "./tic-score.model";
 
 export interface TicMatch {
     board: TIicBoardCell[][],
-    createdAt: Date,
+    // createdAt: Date,
     id: string,
-    playMode: PlayModeTypes,
-    players: TicPlayer[]
+    // playMode: PlayModeTypes,
+    // players: TicPlayer[]
     state: TicMatchState,
-    ticScore: TicScore,
-    updatedAd: Date,
+    // ticScore: TicScore,
+    // updatedAd: Date,
 }

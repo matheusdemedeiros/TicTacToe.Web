@@ -57,8 +57,12 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService.onPlayerJoined().subscribe({
       next: (match: IJoinMatchResponse) => {
         console.log('response do tic event', match)
-        this.currentMatch!.board = match.board;
-        this.currentMatch!.state = match.state;
+        debugger;
+        this.currentMatch = {
+          id: match.matchId,
+          state: match.state,
+          board: match.board,
+        }
         this.currentPlayerId = match.currentPlayerId;
         this.currentPlayerSymbol = match.currentPlayerSymbol;
       }
