@@ -25,7 +25,7 @@ namespace TicTacToe.Application.UseCases.Match.CreatePlayer
                 throw new Exception("Player with this nickname already exists.");
             }
 
-            var ticPlayer = new TicPlayer(request.name, request.nickName, "X");
+            var ticPlayer = new TicPlayer(request.name, request.nickName);
 
             await _ticPlayerRepository.CreateAsync(ticPlayer);
             await _unitOfWork.CommitAsync();

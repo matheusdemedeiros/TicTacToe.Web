@@ -6,7 +6,7 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
     public class TicMatchTest
     {
         private TicPlayer CreatePlayer(string name, string symbol) =>
-            new TicPlayer(name, $"{name.ToLower()}123", symbol);
+            new TicPlayer(name, $"{name.ToLower()}123");
 
         [Fact]
         public void AddPlayer_ShouldAddPlayersUntilMax()
@@ -131,8 +131,8 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
         {
             // Arrange
             var match = new TicMatch();
-            var p1 = new TicPlayer("Alice", "alice123", "X");
-            var p2 = new TicPlayer("Bob", "bob123", "O");
+            var p1 = new TicPlayer("Alice", "alice123");
+            var p2 = new TicPlayer("Bob", "bob123");
 
             match.AddPlayer(p1);
             match.AddPlayer(p2);

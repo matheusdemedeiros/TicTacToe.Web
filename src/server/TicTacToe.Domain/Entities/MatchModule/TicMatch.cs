@@ -39,10 +39,13 @@ namespace TicTacToe.Domain.Entities.MatchModule
                 throw new DomainException("Match already has MAX players.");
             }
 
+            SetPlayerSymbol(ticPlayer);
+
             Players.Add(ticPlayer);
             Touch();
         }
 
+       
         public void StartMatch()
         {
             if (Players.Count != MAX_PLAYERS)
@@ -102,6 +105,11 @@ namespace TicTacToe.Domain.Entities.MatchModule
             {
                 CurrentPlayer = Players.FirstOrDefault(p => p != CurrentPlayer);
             }
+        }
+
+        private void SetPlayerSymbol(TicPlayer ticPlayer)
+        {
+            ticPlayer.SetSymbol(Players.Count == 0 ? "X" : "O");
         }
     }
 }

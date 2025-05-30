@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicTacToe.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using TicTacToe.Infra.Data.Contexts;
 namespace TicTacToe.Infra.Data.Migrations
 {
     [DbContext(typeof(TicDbContext))]
-    partial class TicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530201309_torna o symbolo nulable 2")]
+    partial class tornaosymbolonulable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
