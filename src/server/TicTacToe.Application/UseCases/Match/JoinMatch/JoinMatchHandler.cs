@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using TicTacToe.Application.UseCases.Match.CreateMatch;
+using TicTacToe.Domain.Entities.MatchModule;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
 
@@ -35,13 +37,18 @@ namespace TicTacToe.Application.UseCases.Match.JoinMatch
                 await _unitOfWork.CommitAsync();
             }
 
+            var ticPlayerWithXSymbolId = match.Players.FirstOrDefault(p => p.Symbol == "X")?.Id ?? Guid.Empty;
+            var ticPlayerWithOSymbolId = match.Players.FirstOrDefault(p => p.Symbol == "O")?.Id ?? Guid.Empty;
+
             var response = new JoinMatchResponse
             {
                 MatchId = match.Id,
                 Board = match.Board.Board,
                 State = match.State,
                 CurrentPlayerId = match.CurrentPlayer != null ? match.CurrentPlayer.Id : Guid.Empty,
-                CurrentPlayerSymbol = match.CurrentPlayer != null ? match.CurrentPlayer.Symbol : string.Empty
+                CurrentPlayerSymbol = match.CurrentPlayer != null ? match.CurrentPlayer.Symbol : string.Empty,
+                TicPlayerWithXSymbolId = ticPlayerWithXSymbolId,
+                TicPlayerWithOSymbolId = ticPlayerWithOSymbolId
             };
 
             return response;

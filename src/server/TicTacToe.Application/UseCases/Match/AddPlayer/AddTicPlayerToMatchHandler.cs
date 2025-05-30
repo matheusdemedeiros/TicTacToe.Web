@@ -50,12 +50,17 @@ namespace TicTacToe.Application.UseCases.Match.AddPlayer
 
             await _unitOfWork.CommitAsync();
 
+            var ticPlayerWithXSymbolId = match.Players.FirstOrDefault(p => p.Symbol == "X")?.Id ?? Guid.Empty;
+            var ticPlayerWithOSymbolId = match.Players.FirstOrDefault(p => p.Symbol == "O")?.Id ?? Guid.Empty;
+
             var response = new AddTicPlayerToMatchResponse
             {
                 MatchId = match.Id,
                 PlayerId = player.Id,
                 PlayerName = player.Name,
-                Nickname = player.NickName
+                Nickname = player.NickName,
+                TicPlayerWithXSymbolId = ticPlayerWithXSymbolId,
+                TicPlayerWithOSymbolId = ticPlayerWithOSymbolId
             };
 
             return response;
