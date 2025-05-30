@@ -57,6 +57,9 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
             }
 
             ticMatch.AddPlayer(initialPlayer);
+
+            // necessário para atualizar o jogador com o símbolo correto no banco.
+            await _ticPlayerRepository.UpdateAsync(initialPlayer);
         }
     }
 }
