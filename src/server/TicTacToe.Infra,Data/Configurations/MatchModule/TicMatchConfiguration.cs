@@ -53,6 +53,11 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
                         join.Property<Guid>("MatchId");
                         join.Property<Guid>("PlayerId");
                     });
+
+            builder.HasOne(p => p.CurrentPlayer)
+                .WithMany()
+                .HasForeignKey(p => p.CurrentPlayerId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicTacToe.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using TicTacToe.Infra.Data.Contexts;
 namespace TicTacToe.Infra.Data.Migrations
 {
     [DbContext(typeof(TicDbContext))]
-    partial class TicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530022916_Adiciona o conceito do jogador atual")]
+    partial class Adicionaoconceitodojogadoratual
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,7 +49,7 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid?>("CurrentPlayerId")
+                    b.Property<Guid>("CurrentPlayerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("PlayMode")
@@ -152,7 +155,8 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.HasOne("TicTacToe.Domain.Entities.MatchModule.TicPlayer", "CurrentPlayer")
                         .WithMany()
                         .HasForeignKey("CurrentPlayerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.OwnsOne("TicTacToe.Domain.Entities.MatchModule.TicBoard", "Board", b1 =>
                         {
