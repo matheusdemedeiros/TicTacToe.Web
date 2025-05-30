@@ -25,14 +25,10 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
                 .HasForeignKey<TicScore>(b => b.MatchId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.OwnsOne(p => p.Board, board =>
-            {
-                board.ToJson();
-
-                board.Property(b => b.WinningSimbol)
-                     .HasColumnName("WinningSimbol")
-                     .HasMaxLength(1);
-            });
+            builder.HasOne(x => x.Board)
+               .WithOne()
+               .HasForeignKey<TicMatch>(x => x.TicBoardId)
+               .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(m => m.Players)
                 .WithMany(p => p.Matches)

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { TicBoardCellState } from './models/tic-board-cell-state.enum';
 
@@ -12,4 +12,13 @@ import { TicBoardCellState } from './models/tic-board-cell-state.enum';
 export class TicBoardCellComponent {
   @Input() public symbol: string = '';
   @Input() public state: TicBoardCellState = TicBoardCellState.BLANK;
+  @Input() public row: number = 0;
+  @Input() public col: number = 0;
+  @Output() cellClicked = new EventEmitter<{ row: number; col: number }>();
+
+
+  public onClick() {
+    
+    this.cellClicked.emit({ row: this.row, col: this.col })
+  }
 }

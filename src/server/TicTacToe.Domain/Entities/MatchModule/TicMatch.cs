@@ -12,6 +12,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public PlayModeType PlayMode { get; private set; }
         public virtual TicPlayer? CurrentPlayer { get; private set; }
         public Guid? CurrentPlayerId { get; set; }
+        public Guid TicBoardId { get; set; }
 
         private string _winningSimbol;
         private const int MAX_PLAYERS = 2;
@@ -64,6 +65,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public void MakePlay(string simble, int positionX, int positionY)
         {
             Board.MarkCell(simble, positionX, positionY);
+            Board.SyncSerializedBoard();
             SwitchCurrentPlayer();
             Touch();
         }

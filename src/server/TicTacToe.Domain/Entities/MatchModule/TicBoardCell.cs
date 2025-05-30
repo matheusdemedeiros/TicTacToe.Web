@@ -2,8 +2,8 @@
 {
     public class TicBoardCell
     {
-        public string Symbol { get; private set; }
-        public TicBoardCellState State { get; private set; }
+        public string Symbol { get; set; }
+        public TicBoardCellState State { get; set; }
 
         public TicBoardCell()
         {
