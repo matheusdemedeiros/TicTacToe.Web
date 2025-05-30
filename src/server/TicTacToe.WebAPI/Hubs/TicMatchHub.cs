@@ -1,50 +1,45 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using TicTacToe.Domain.Interfaces.MatchModule;
+﻿using MediatR;
+using Microsoft.AspNetCore.SignalR;
+using TicTacToe.Application.UseCases.Match.JoinMatch;
 
 namespace TicTacToe.WebAPI.Hubs
 {
     public class TicMatchHub : Hub
     {
         private const string GroupPrefix = "ticmatch";
-        private readonly ITicMatchRepository _ticMatchRepository;
+        private IMediator _mediator;
 
-        public TicMatchHub(ITicMatchRepository ticMatchRepository)
+        public TicMatchHub(IMediator mediator)
         {
-            _ticMatchRepository = ticMatchRepository;
+            _mediator = mediator;
         }
 
-        public async Task JoinMatchAsync(string matchId)
+        public async Task JoinMatchAsync(JoinMatchCommand command)
         {
-            try
+            var result = await _mediator.Send(command);
+
+            if (result == null)
             {
-
-                if (!Guid.TryParse(matchId, out var matchGuid))
-                {
-                    throw new HubException("Invalid match ID format.");
-                }
-
-                var groupName = $"{GroupPrefix}-{matchId}";
-                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-
-                var match = await _ticMatchRepository.RetrieveByIdAsync(matchGuid);
-                if (match == null)
-                {
-                    throw new HubException("Match not found.");
-                }
-
-                await Clients.Group(groupName).SendAsync("TicPlayerJoined", match);
+                throw new Exception("Match not found or invalid command.");
             }
-            catch (Exception ex)
-            {
 
-                throw;
-            }
+            await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(Guid.Parse(command.MatchId)));
+            await NotifyAllPlayersFromMatchAsync<JoinMatchResponse>(result, Guid.Parse(command.MatchId), "TicPlayerJoined");
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            // Aqui você pode implementar lógica futura para remoção de grupos ou logs
             await base.OnDisconnectedAsync(exception);
+        }
+
+        private async Task NotifyAllPlayersFromMatchAsync<T>(T response, Guid matchId, string clientMethodName)
+        {
+            await Clients.Group(GetGroupName(matchId)).SendAsync(clientMethodName, response);
+        }
+
+        private string GetGroupName(Guid matchId)
+        {
+            return $"{GroupPrefix}-{matchId}";
         }
     }
 }

@@ -4,6 +4,7 @@ import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { IJoinMatchCommand } from './hub-messages.model';
 
 @Injectable({ providedIn: 'root' })
 export class TicMatchHubService {
@@ -18,8 +19,8 @@ export class TicMatchHubService {
     this.startConnection();
   }
 
-  public joinMatch(matchId: string): void {
-    this.hubConnection!.invoke('JoinMatchAsync', matchId);
+  public joinMatch(joinMatchCommand: IJoinMatchCommand): void {
+    this.hubConnection!.invoke('JoinMatchAsync', joinMatchCommand);
   }
 
   public onPlayerJoined(): Observable<any> {
