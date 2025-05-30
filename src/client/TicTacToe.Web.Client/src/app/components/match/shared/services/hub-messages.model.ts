@@ -12,3 +12,18 @@ export interface IJoinMatchResponse {
     currentPlayerId: string,
     currentPlayerSymbol: string
 }
+
+export interface IMakePlayerMoveCommand {
+    matchId: string
+    playerId: string,
+    cellRow: number,
+    cellCol: number,
+}
+
+export interface IMakePlayerMoveResponse {
+    matchId: string,
+    board: TIicBoardCell[][],
+    state: TicMatchState,
+    currentPlayerId: string,
+    currentPlayerSymbol: string
+}

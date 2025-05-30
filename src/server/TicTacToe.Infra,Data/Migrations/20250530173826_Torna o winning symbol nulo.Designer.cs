@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TicTacToe.Infra.Data.Contexts;
 
@@ -11,9 +12,11 @@ using TicTacToe.Infra.Data.Contexts;
 namespace TicTacToe.Infra.Data.Migrations
 {
     [DbContext(typeof(TicDbContext))]
-    partial class TicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250530173826_Torna o winning symbol nulo")]
+    partial class Tornaowinningsymbolnulo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,32 +40,6 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.ToTable("TicMatchPlayers", (string)null);
                 });
 
-            modelBuilder.Entity("TicTacToe.Domain.Entities.MatchModule.TicBoard", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("SerializedBoard")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Board");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("WinningSimbol")
-                        .HasMaxLength(1)
-                        .HasColumnType("nvarchar(1)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TicBoards", (string)null);
-                });
-
             modelBuilder.Entity("TicTacToe.Domain.Entities.MatchModule.TicMatch", b =>
                 {
                     b.Property<Guid>("Id")
@@ -81,18 +58,12 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("TicBoardId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentPlayerId");
-
-                    b.HasIndex("TicBoardId")
-                        .IsUnique();
 
                     b.ToTable("TicMatches", (string)null);
                 });
@@ -186,13 +157,31 @@ namespace TicTacToe.Infra.Data.Migrations
                         .HasForeignKey("CurrentPlayerId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("TicTacToe.Domain.Entities.MatchModule.TicBoard", "Board")
-                        .WithOne()
-                        .HasForeignKey("TicTacToe.Domain.Entities.MatchModule.TicMatch", "TicBoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.OwnsOne("TicTacToe.Domain.Entities.MatchModule.TicBoard", "Board", b1 =>
+                        {
+                            b1.Property<Guid>("TicMatchId")
+                                .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("Board");
+                            b1.Property<string>("Board")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("BoardJson");
+
+                            b1.Property<string>("WinningSimbol")
+                                .HasMaxLength(1)
+                                .HasColumnType("nvarchar(1)")
+                                .HasColumnName("WinningSimbol");
+
+                            b1.HasKey("TicMatchId");
+
+                            b1.ToTable("TicMatches");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TicMatchId");
+                        });
+
+                    b.Navigation("Board")
+                        .IsRequired();
 
                     b.Navigation("CurrentPlayer");
                 });

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Application.UseCases.Match.JoinMatch;
+using TicTacToe.Application.UseCases.Match.MakeMove;
 
 namespace TicTacToe.WebAPI.Hubs
 {
@@ -25,6 +26,16 @@ namespace TicTacToe.WebAPI.Hubs
 
             await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(Guid.Parse(command.MatchId)));
             await NotifyAllPlayersFromMatchAsync<JoinMatchResponse>(result, Guid.Parse(command.MatchId), "TicPlayerJoined");
+        }
+
+        public async Task MakePlayerMoveAsync(MakePlayerMoveCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+            {
+                throw new Exception("Invalid move or match not found.");
+            }
+            await NotifyAllPlayersFromMatchAsync<MakePlayerMoveResponse>(result, Guid.Parse(command.MatchId), "TicPlayerMadeMove");
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

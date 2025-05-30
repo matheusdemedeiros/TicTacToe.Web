@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
 
 namespace TicTacToe.Application.UseCases.Match.JoinMatch
@@ -6,10 +7,12 @@ namespace TicTacToe.Application.UseCases.Match.JoinMatch
     public class JoinMatchHandler : IRequestHandler<JoinMatchCommand, JoinMatchResponse>
     {
         private readonly ITicMatchRepository _ticMatchRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public JoinMatchHandler(ITicMatchRepository ticMatchRepository)
+        public JoinMatchHandler(ITicMatchRepository ticMatchRepository, IUnitOfWork unitOfWork)
         {
             _ticMatchRepository = ticMatchRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<JoinMatchResponse> Handle(JoinMatchCommand request, CancellationToken cancellationToken)
@@ -24,6 +27,12 @@ namespace TicTacToe.Application.UseCases.Match.JoinMatch
             if (match == null)
             {
                 throw new Exception("Match not found.");
+            }
+
+            if (match.Players.Count == 2)
+            {
+                match.StartMatch();
+                await _unitOfWork.CommitAsync();
             }
 
             var response = new JoinMatchResponse

@@ -41,6 +41,7 @@ namespace TicTacToe.Infra_Data.Repositories
         public async Task<TicMatch?> RetrieveByIdAsync(Guid id)
         {
             return await _matches.Include(t => t.Players)
+                .Include(t => t.Board)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 

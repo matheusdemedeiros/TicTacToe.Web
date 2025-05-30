@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 import { TicMatchHubService } from '../shared/services/tic-match-hub.service';
 import { TicMatch } from '../shared/models/tic-match.model';
-import { IJoinMatchCommand, IJoinMatchResponse } from '../shared/services/hub-messages.model';
+import { IJoinMatchCommand, IJoinMatchResponse, IMakePlayerMoveCommand, IMakePlayerMoveResponse } from '../shared/services/hub-messages.model';
 
 @Component({
   selector: 'app-tic-match',
@@ -40,10 +40,24 @@ export class TicMatchComponent implements OnInit {
           if (response) {
             this.connectToMatchHub();
             this.onPlayerJoined();
+            this.onPlayerMadeMove();
           }
         }
       })
   }
+
+  public onCellClick(position: { row: number; col: number }): void {
+    console.log('Jogada na célula:', position);
+    const command: IMakePlayerMoveCommand = {
+      cellRow: position.row,
+      cellCol: position.col,
+      matchId: this.currentMatchId,
+      playerId: this.myPlayerId
+    }
+
+    this.ticMatchHubService.makePlayerMove(command);
+  }
+
 
   private connectToMatchHub(): void {
     const command: IJoinMatchCommand = {
@@ -57,12 +71,29 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService.onPlayerJoined().subscribe({
       next: (match: IJoinMatchResponse) => {
         console.log('response do tic event', match)
-        debugger;
         this.currentMatch = {
           id: match.matchId,
           state: match.state,
           board: match.board,
         }
+        this.currentPlayerId = match.currentPlayerId;
+        this.currentPlayerSymbol = match.currentPlayerSymbol;
+      }
+    })
+  }
+
+  private onPlayerMadeMove(): void {
+    
+    this.ticMatchHubService.onPlayerMadeMove().subscribe({
+      next: (match: IMakePlayerMoveResponse) => {
+        
+        console.log('response do tic event', match)
+        this.currentMatch = {
+          id: match.matchId,
+          state: match.state,
+          board: [...match.board.map(row => [...row])], // nova referência profunda
+        };
+
         this.currentPlayerId = match.currentPlayerId;
         this.currentPlayerSymbol = match.currentPlayerSymbol;
       }

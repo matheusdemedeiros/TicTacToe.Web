@@ -1,8 +1,8 @@
 ﻿using TicTacToe.Domain.Entities.MatchModule;
 
-namespace TicTacToe.Application.UseCases.Match.JoinMatch
+namespace TicTacToe.Application.UseCases.Match.MakeMove
 {
-    public record JoinMatchResponse
+    public class MakePlayerMoveResponse
     {
         public Guid MatchId { get; set; }
 
