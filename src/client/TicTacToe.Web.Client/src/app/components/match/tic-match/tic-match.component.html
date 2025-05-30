@@ -5,13 +5,13 @@
       <h2 class="text-2xl font-extrabold text-white">Tic Tac Toe</h2>
       <p class="text-sm text-indigo-500">ID da Partida: <span class="text-gray-500 font-medium">{{ currentMatchId
           }}</span></p>
-      <p class="text-sm text-indigo-500">Seu ID: <span class="text-gray-500 font-medium">{{ currentPlayerId }}</span>
+      <p class="text-sm text-indigo-500">Seu ID: <span class="text-gray-500 font-medium">{{ myPlayerId }}</span>
       </p>
     </div>
 
     <div class="flex items-center gap-2 justify-center">
       <p class="text-sm text-gray-500">Vez do jogador:</p>
-      <p class="text-4xl font-bold text-indigo-500 tracking-wider">{{ currentSymbol }}</p>
+      <p class="text-4xl font-bold text-indigo-500 tracking-wider">{{ mySymbol }}</p>
     </div>
 
     <app-tic-board [currentMatch]="currentMatch"></app-tic-board>

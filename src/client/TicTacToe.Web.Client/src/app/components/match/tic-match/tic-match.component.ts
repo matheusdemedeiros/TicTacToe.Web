@@ -14,9 +14,11 @@ import { IJoinMatchCommand, IJoinMatchResponse } from '../shared/services/hub-me
   styleUrl: './tic-match.component.scss'
 })
 export class TicMatchComponent implements OnInit {
-  protected currentSymbol: string = 'O';
+  protected mySymbol: string = 'O';
+  protected myPlayerId: string = '';
   protected currentMatchId: string = '';
   protected currentPlayerId: string = '';
+  protected currentPlayerSymbol: string = '';
 
   protected currentMatch: TicMatch | undefined;
 
@@ -30,7 +32,7 @@ export class TicMatchComponent implements OnInit {
 
   public ngOnInit(): void {
     this.currentMatchId = this.route.snapshot.queryParamMap.get('ticMatchId')!;
-    this.currentPlayerId = this.route.snapshot.queryParamMap.get('ticPlayerId')!;
+    this.myPlayerId = this.route.snapshot.queryParamMap.get('ticPlayerId')!;
 
     this.ticMatchHubService.connectionEstablished
       .subscribe({
@@ -55,7 +57,10 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService.onPlayerJoined().subscribe({
       next: (match: IJoinMatchResponse) => {
         console.log('response do tic event', match)
-        // this.currentMatch = match;
+        this.currentMatch!.board = match.board;
+        this.currentMatch!.state = match.state;
+        this.currentPlayerId = match.currentPlayerId;
+        this.currentPlayerSymbol = match.currentPlayerSymbol;
       }
     })
   }

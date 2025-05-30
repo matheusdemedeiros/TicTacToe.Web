@@ -1,11 +1,11 @@
 import { TicMatchState } from "../../../home/shared/models/match-state.enum";
 import { PlayModeTypes } from "../../../home/shared/models/play-mode-types.enum";
 import { TicPlayer } from "../../../home/shared/models/player.model";
-import { TicBoard } from "./tic-board.model";
+import { TIicBoardCell } from "./tic-board-cell..model";
 import { TicScore } from "./tic-score.model";
 
 export interface TicMatch {
-    board: TicBoard,
+    board: TIicBoardCell[][],
     createdAt: Date,
     id: string,
     playMode: PlayModeTypes,
