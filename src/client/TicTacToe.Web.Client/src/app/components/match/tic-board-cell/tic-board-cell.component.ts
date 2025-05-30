@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+
 import { TicBoardCellState } from './models/tic-board-cell-state.enum';
 
 @Component({
@@ -9,6 +10,6 @@ import { TicBoardCellState } from './models/tic-board-cell-state.enum';
   styleUrl: './tic-board-cell.component.scss'
 })
 export class TicBoardCellComponent {
-  public symbol: string = '';
-  public state: TicBoardCellState = TicBoardCellState.BLANK;
+  @Input() public symbol: string = '';
+  @Input() public state: TicBoardCellState = TicBoardCellState.BLANK;
 }

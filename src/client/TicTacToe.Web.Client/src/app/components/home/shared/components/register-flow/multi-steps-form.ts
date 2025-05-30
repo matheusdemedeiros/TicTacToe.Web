@@ -1,6 +1,7 @@
 import { FormGroup } from '@angular/forms';
-import { MatchTypes } from '../../models/match-types.enum';
 import { Injectable } from '@angular/core';
+
+import { MatchTypes } from '../../models/match-types.enum';
 import { PlayModeTypes } from '../../models/play-mode-types.enum';
 
 export interface IFormStep {

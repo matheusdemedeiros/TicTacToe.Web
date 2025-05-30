@@ -9,6 +9,6 @@ export interface IJoinMatchResponse {
     matchId: string,
     board: TIicBoardCell[][],
     state: TicMatchState,
-    currentPlaierId: string,
+    currentPlayerId: string,
     currentPlayerSymbol: string
 }
