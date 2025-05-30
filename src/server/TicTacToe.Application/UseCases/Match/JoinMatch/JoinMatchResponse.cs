@@ -13,5 +13,8 @@ namespace TicTacToe.Application.UseCases.Match.JoinMatch
         public Guid CurrentPlayerId { get; set; }
 
         public string CurrentPlayerSymbol { get; set; }
+
+        public Guid TicPlayerWithXSymbolId { get; set; }
+        public Guid TicPlayerWithOSymbolId { get; set; }
     }
 }

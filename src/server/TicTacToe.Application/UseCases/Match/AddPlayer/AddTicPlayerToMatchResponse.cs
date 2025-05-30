@@ -9,5 +9,7 @@
         public Guid PlayerId { get; internal set; }
         public string PlayerName { get; internal set; }
         public string Nickname { get; internal set; }
+        public Guid TicPlayerWithXSymbolId { get; set; }
+        public Guid TicPlayerWithOSymbolId { get; set; }
     }
 }

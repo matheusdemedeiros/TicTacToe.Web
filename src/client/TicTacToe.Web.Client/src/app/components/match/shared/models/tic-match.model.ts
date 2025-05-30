@@ -13,4 +13,6 @@ export interface TicMatch {
     state: TicMatchState,
     // ticScore: TicScore,
     // updatedAd: Date,
+    ticPlayerWithXSymbolId?: string;
+    ticPlayerWithOSymbolId?: string;
 }

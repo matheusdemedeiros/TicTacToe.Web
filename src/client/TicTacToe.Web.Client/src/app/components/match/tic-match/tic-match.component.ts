@@ -14,7 +14,7 @@ import { IJoinMatchCommand, IJoinMatchResponse, IMakePlayerMoveCommand, IMakePla
   styleUrl: './tic-match.component.scss'
 })
 export class TicMatchComponent implements OnInit {
-  protected mySymbol: string = 'O';
+  protected mySymbol: string = '';
   protected myPlayerId: string = '';
   protected currentMatchId: string = '';
   protected currentPlayerId: string = '';
@@ -28,6 +28,19 @@ export class TicMatchComponent implements OnInit {
   constructor() {
     this.route = inject(ActivatedRoute);
     this.ticMatchHubService = inject(TicMatchHubService)
+  }
+
+  public get myMatchSymbol(): string {
+    debugger;
+    switch (this.myPlayerId) {
+      case this.currentMatch?.ticPlayerWithOSymbolId:
+        return "O";
+      case this.currentMatch?.ticPlayerWithXSymbolId:
+        return "X";
+      default:
+        return '';
+    }
+
   }
 
   public ngOnInit(): void {
@@ -75,6 +88,8 @@ export class TicMatchComponent implements OnInit {
           id: match.matchId,
           state: match.state,
           board: match.board,
+          ticPlayerWithXSymbolId: match.ticPlayerWithXSymbolId,
+          ticPlayerWithOSymbolId: match.TicPlayerWithOSymbolId
         }
         this.currentPlayerId = match.currentPlayerId;
         this.currentPlayerSymbol = match.currentPlayerSymbol;
@@ -83,15 +98,15 @@ export class TicMatchComponent implements OnInit {
   }
 
   private onPlayerMadeMove(): void {
-    
+
     this.ticMatchHubService.onPlayerMadeMove().subscribe({
       next: (match: IMakePlayerMoveResponse) => {
-        
+
         console.log('response do tic event', match)
         this.currentMatch = {
           id: match.matchId,
           state: match.state,
-          board: [...match.board.map(row => [...row])], // nova referência profunda
+          board: [...match.board.map(row => [...row])],
         };
 
         this.currentPlayerId = match.currentPlayerId;

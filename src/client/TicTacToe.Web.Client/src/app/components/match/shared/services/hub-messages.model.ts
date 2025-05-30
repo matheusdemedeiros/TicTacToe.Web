@@ -10,7 +10,9 @@ export interface IJoinMatchResponse {
     board: TIicBoardCell[][],
     state: TicMatchState,
     currentPlayerId: string,
-    currentPlayerSymbol: string
+    currentPlayerSymbol: string,
+    ticPlayerWithXSymbolId: string;
+    TicPlayerWithOSymbolId: string;
 }
 
 export interface IMakePlayerMoveCommand {

@@ -32,7 +32,14 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
 
             await _unitOfWork.CommitAsync();
 
-            var response = new CreateTicMatchResponse(ticMatch.Id);
+            var ticPlayerWithXSymbolId = ticMatch.Players.FirstOrDefault(p => p.Symbol == "X")?.Id ?? Guid.Empty;
+            var ticPlayerWithOSymbolId = ticMatch.Players.FirstOrDefault(p => p.Symbol == "O")?.Id ?? Guid.Empty;
+            var response = new CreateTicMatchResponse()
+            {
+                MatchId = ticMatch.Id,
+                TicPlayerWithXSymbolId = ticPlayerWithXSymbolId,
+                TicPlayerWithOSymbolId = ticPlayerWithOSymbolId
+            };
 
             return response;
         }

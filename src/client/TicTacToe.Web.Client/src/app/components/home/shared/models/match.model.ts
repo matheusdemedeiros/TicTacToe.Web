@@ -8,6 +8,8 @@ export interface ICreateTicMatchCommand {
 
 export interface ICreateTicMatchResponse {
     matchId: string,
+    ticPlayerWithXSymbolId: string;
+    TicPlayerWithOSymbolId: string;
 }
 
 export interface IAddTicPlayerToMatchCommand {
@@ -20,6 +22,8 @@ export interface IAddTicPlayerToMatchResponse {
     playerId: string;
     playerName: string;
     nickname: string;
+    ticPlayerWithXSymbolId: string;
+    TicPlayerWithOSymbolId: string;
 }
 
 export interface IRetrieveTicMatchByIdResponse {
