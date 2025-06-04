@@ -10,13 +10,16 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
             // Arrange
             var player = new TicPlayer("João", "joaozin");
             var score = new TicScore();
+            var match = new TicMatch();
+            match.AddPlayer(player);
+            
 
             // Act
             score.Set(player);
 
             // Assert
             Assert.False(score.Tie);
-            Assert.Equal("X", score.WinningSymbol);
+            Assert.Equal(player.Symbol, score.WinningSymbol);
             Assert.Equal(player, score.WinningPlayer);
         }
 

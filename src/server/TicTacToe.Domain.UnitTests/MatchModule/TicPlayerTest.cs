@@ -32,16 +32,6 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
             var ex = Assert.Throws<DomainException>(() => new TicPlayer(name, nickName));
             Assert.Equal("Name and NickName cannot be null or empty.", ex.Message);
         }
-
-        [Theory]
-        [InlineData("valid", "valid", null)]
-        [InlineData("valid", "valid", "")]
-        public void Constructor_WithNullOrEmptySymbol_ShouldThrowDomainException(string name, string nickName, string symbol)
-        {
-            // Act & Assert
-            var ex = Assert.Throws<DomainException>(() => new TicPlayer(name, nickName));
-            Assert.Equal("TicPlayer symbol is required.", ex.Message);
-        }
     }
 }
 

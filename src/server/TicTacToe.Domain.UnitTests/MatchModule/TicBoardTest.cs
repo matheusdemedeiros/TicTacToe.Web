@@ -131,8 +131,8 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
         private string GetCellSymbol(TicBoard board, int x, int y)
         {
             var field = typeof(TicBoard).GetField("_board", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var cells = (TicBoardCell[,])field.GetValue(board);
-            return cells[x, y].Symbol;
+            var cells = (TicBoardCell[][])field.GetValue(board);
+            return cells[x][y].Symbol;
         }
     }
 }

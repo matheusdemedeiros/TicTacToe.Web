@@ -72,9 +72,9 @@ namespace TicTacToe.Domain.UnitTests.MatchModule
 
             // Acesso ao campo privado _board via reflexão
             var boardField = typeof(TicBoard).GetField("_board", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var board = (TicBoardCell[,])boardField.GetValue(match.Board);
+            var board = (TicBoardCell[][])boardField.GetValue(match.Board);
 
-            Assert.Equal("X", board[0, 0].Symbol);
+            Assert.Equal("X", board[0][0].Symbol);
         }
 
         [Fact]
