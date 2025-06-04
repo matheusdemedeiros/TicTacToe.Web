@@ -70,6 +70,8 @@ namespace TicTacToe.Domain.Entities.MatchModule
             Board.MarkCell(simble, positionX, positionY);
             Board.SyncSerializedBoard();
             SwitchCurrentPlayer();
+            DetectWin();
+            IsTie();
             Touch();
         }
 
