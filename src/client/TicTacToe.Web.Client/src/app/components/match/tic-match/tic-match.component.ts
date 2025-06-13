@@ -31,7 +31,6 @@ export class TicMatchComponent implements OnInit {
   }
 
   public get myMatchSymbol(): string {
-    debugger;
     switch (this.myPlayerId) {
       case this.currentMatch?.ticPlayerWithOSymbolId:
         return "O";
