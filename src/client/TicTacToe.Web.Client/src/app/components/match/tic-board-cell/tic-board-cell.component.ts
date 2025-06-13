@@ -22,3 +22,4 @@ export class TicBoardCellComponent {
     this.cellClicked.emit({ row: this.row, col: this.col })
   }
 }
+

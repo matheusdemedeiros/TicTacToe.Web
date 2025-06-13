@@ -39,18 +39,28 @@ namespace TicTacToe.Domain.Entities.MatchModule
                 throw new DomainException("Match already has MAX players.");
             }
 
+            if (State != TicMatchState.NOT_STARTED)
+            {
+                throw new DomainException("Match has already started or finished. Cannot add more players.");
+            }
+
             SetPlayerSymbol(ticPlayer);
 
             Players.Add(ticPlayer);
             Touch();
         }
 
-       
+
         public void StartMatch()
         {
             if (Players.Count != MAX_PLAYERS)
             {
                 throw new DomainException("Match cannot start without two players.");
+            }
+
+            if (State != TicMatchState.NOT_STARTED)
+            {
+                throw new DomainException("Match has already started or finished. Cannot start again.");
             }
 
             State = TicMatchState.IN_PROGRESS;
@@ -60,6 +70,12 @@ namespace TicTacToe.Domain.Entities.MatchModule
 
         public void FinishMatch()
         {
+
+            if (State != TicMatchState.IN_PROGRESS)
+            {
+                throw new DomainException("Match is not in progress. Cannot finish.");
+            }
+
             State = TicMatchState.FINISHED;
             SetScore();
             Touch();
@@ -67,6 +83,11 @@ namespace TicTacToe.Domain.Entities.MatchModule
 
         public void MakePlay(string simble, int positionX, int positionY)
         {
+            if (State != TicMatchState.IN_PROGRESS)
+            {
+                throw new DomainException("Match is not in progress. Cannot make a play.");
+            }
+
             Board.MarkCell(simble, positionX, positionY);
             Board.SyncSerializedBoard();
             SwitchCurrentPlayer();
