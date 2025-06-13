@@ -15,6 +15,7 @@ import { IFormStep, MultiStepFormManager } from './multi-steps-form';
 import { MatchService } from '../../services/match.service';
 import { IAddTicPlayerToMatchCommand, IAddTicPlayerToMatchResponse, ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
 import { PlayModeTypes } from '../../models/play-mode-types.enum';
+import { NotificationService } from '../../../../../core/notification.service';
 
 @Component({
   selector: 'app-register-flow',
@@ -36,12 +37,14 @@ export class RegisterFlowComponent implements OnDestroy {
   private ticPlayerId: string = '';
   private ticMatchId: string = '';
   private router: Router;
-  private successRoute: string = 'ticmatch'
+  private successRoute: string = 'ticmatch';
+  private notificationService;
 
   constructor() {
     this.fb = inject(FormBuilder);
     this.playerService = inject(PlayerService);
     this.matchService = inject(MatchService);
+    this.notificationService = inject(NotificationService);
     this.router = inject(Router);
     this.form = this.fb.group({
       fullName: ['', Validators.required],
@@ -151,7 +154,7 @@ export class RegisterFlowComponent implements OnDestroy {
           }
 
           this.ticPlayerId = createTicPlayerResponse.id;
-          
+
           return this.createMatch(this.ticPlayerId)
         }),
         mergeMap((createTicMatchResponse: ICreateTicMatchResponse) => {
@@ -165,6 +168,8 @@ export class RegisterFlowComponent implements OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.navigateOnSuccess();
+
+          this.notificationService.showSuccessMessage(response, "Resposta");
         },
         error: (error: any) => console.log('error', error)
       });
