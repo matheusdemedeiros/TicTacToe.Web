@@ -151,6 +151,7 @@ export class RegisterFlowComponent implements OnDestroy {
           }
 
           this.ticPlayerId = createTicPlayerResponse.id;
+          
           return this.createMatch(this.ticPlayerId)
         }),
         mergeMap((createTicMatchResponse: ICreateTicMatchResponse) => {
