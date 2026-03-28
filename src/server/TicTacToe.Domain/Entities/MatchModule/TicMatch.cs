@@ -81,6 +81,17 @@ namespace TicTacToe.Domain.Entities.MatchModule
             Touch();
         }
 
+        public void Abandon()
+        {
+            if (State == TicMatchState.FINISHED)
+            {
+                throw new DomainException("Match already finished.");
+            }
+
+            State = TicMatchState.FINISHED;
+            Touch();
+        }
+
         public void MakePlay(string simble, int positionX, int positionY)
         {
             if (State != TicMatchState.IN_PROGRESS)
