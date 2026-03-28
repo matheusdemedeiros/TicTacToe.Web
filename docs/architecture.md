@@ -162,7 +162,7 @@ Connection drops trigger automatic reconnection with user feedback.
 
 #### `POST /api/Player`
 
-Create a new player.
+Get-or-create a player. Returns existing player if nickname already exists.
 
 ```json
 // Request

@@ -73,7 +73,7 @@ Dependency rule: inner layers do not know about outer layers.
 
 | Method | Route | Request | Response |
 |--------|-------|---------|----------|
-| POST | /api/Player | { name, nickName } | { id } |
+| POST | /api/Player | { name, nickName } | { id } (get-or-create: returns existing player if nickname matches) |
 | POST | /api/Match | { playMode, initialPlayerId } | { matchId, ticPlayerWithXSymbolId, ticPlayerWithOSymbolId } |
 | POST | /api/Match/{id}/add-player | { playerId, matchId } | { matchId, playerId, playerName, nickname, ticPlayerWithXSymbolId, ticPlayerWithOSymbolId } |
 | GET | /api/Match/{id} | - | { found, ticMatchState, playerNumbers, matchId } |
@@ -84,8 +84,8 @@ Dependency rule: inner layers do not know about outer layers.
 |--------|-----------|---------|
 | JoinMatchAsync | Client->Server | { matchId } |
 | MakePlayerMoveAsync | Client->Server | { matchId, playerId, cellRow, cellCol } |
-| TicPlayerJoined | Server->Client | { matchId, board[][], state, currentPlayerId, currentPlayerSymbol, ticPlayerWithXSymbolId, ticPlayerWithOSymbolId } |
-| TicPlayerMadeMove | Server->Client | { matchId, board[][], state, currentPlayerId, currentPlayerSymbol } |
+| TicPlayerJoined | Server->Client | TicMatchStateResponse (unified, see below) |
+| TicPlayerMadeMove | Server->Client | TicMatchStateResponse (unified, see below) |
 
 ### Shared Enums
 
@@ -100,6 +100,21 @@ Dependency rule: inner layers do not know about outer layers.
 - **TicBoard**: 3x3 board, serialized as JSON in DB via SerializedBoard
 - **TicBoardCell**: Individual cell with Symbol and State
 - **TicScore**: Score (WinningPlayer, WinningSymbol, Tie)
+
+### TicMatchStateResponse (Unified Game State)
+
+Both SignalR events (TicPlayerJoined, TicPlayerMadeMove) return the same complete state:
+- matchId, board[][], state, currentPlayerId, currentPlayerSymbol
+- ticPlayerWithXSymbolId, ticPlayerWithOSymbolId
+- isFinished, isTie, winnerSymbol, winnerPlayerId
+
+Built via `TicMatchStateResponse.FromMatch(match)` factory in `Application/UseCases/Match/Shared/`.
+
+### Frontend Game Session
+
+- `GameSessionService` persists matchId + playerId in localStorage
+- On match screen load, falls back to localStorage if query params are missing (enables reconnection)
+- Session is cleared when the game finishes
 
 ## Error Handling
 
