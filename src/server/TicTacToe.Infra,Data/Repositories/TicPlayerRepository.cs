@@ -43,6 +43,11 @@ namespace TicTacToe.Infra.Data.Repositories
             return await _players.FindAsync(id);
         }
 
+        public async Task<TicPlayer?> RetrieveByConditionAsync(Expression<Func<TicPlayer, bool>> condition)
+        {
+            return await _players.FirstOrDefaultAsync(condition);
+        }
+
         public async Task<bool> HasAnyWithConditionAsync(Expression<Func<TicPlayer, bool>> condition)
         {
             return await _players.AnyAsync(condition);

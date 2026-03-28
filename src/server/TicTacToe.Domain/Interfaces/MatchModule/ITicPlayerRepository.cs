@@ -7,6 +7,7 @@ namespace TicTacToe.Domain.Interfaces.MatchModule
     {
         Task CreateAsync(TicPlayer player);
         Task<TicPlayer?> RetrieveByIdAsync(Guid id);
+        Task<TicPlayer?> RetrieveByConditionAsync(Expression<Func<TicPlayer, bool>> condition);
         Task<List<TicPlayer>> RetrieveAllAsync();
         Task UpdateAsync(TicPlayer player);
         Task DeleteAsync(Guid id);
