@@ -12,6 +12,14 @@ export interface IMakePlayerMoveCommand {
     cellCol: number,
 }
 
+export interface IAbandonMatchCommand {
+    matchId: string
+}
+
+export interface IRematchCommand {
+    previousMatchId: string
+}
+
 export interface ITicMatchStateResponse {
     matchId: string,
     board: TIicBoardCell[][],
@@ -20,8 +28,11 @@ export interface ITicMatchStateResponse {
     currentPlayerSymbol: string,
     ticPlayerWithXSymbolId: string,
     ticPlayerWithOSymbolId: string,
+    playerXNickName: string | null,
+    playerONickName: string | null,
     isFinished: boolean,
     isTie: boolean,
+    isAbandoned: boolean,
     winnerSymbol: string | null,
     winnerPlayerId: string | null
 }

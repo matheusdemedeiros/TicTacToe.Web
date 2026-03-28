@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 import { TicMatchHubService } from '../shared/services/tic-match-hub.service';
 import { TicMatch } from '../shared/models/tic-match.model';
-import { IJoinMatchCommand, IMakePlayerMoveCommand, ITicMatchStateResponse } from '../shared/services/hub-messages.model';
+import { IAbandonMatchCommand, IJoinMatchCommand, IMakePlayerMoveCommand, IRematchCommand, ITicMatchStateResponse } from '../shared/services/hub-messages.model';
 import { TicMatchState } from '../../home/shared/models/match-state.enum';
 import { NotificationService } from '../../../core/notification.service';
 import { GameSessionService } from '../../../core/game-session.service';
@@ -22,6 +22,7 @@ export class TicMatchComponent implements OnInit {
   protected currentPlayerId: string = '';
   protected currentPlayerSymbol: string = '';
   protected currentMatch: TicMatch | undefined;
+  protected showGameOverModal: boolean = false;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -37,6 +38,18 @@ export class TicMatchComponent implements OnInit {
     return map[this.myPlayerId] ?? '';
   }
 
+  public get myNickName(): string {
+    if (!this.currentMatch) return '';
+    if (this.currentMatch.ticPlayerWithXSymbolId === this.myPlayerId) return this.currentMatch.playerXNickName ?? '';
+    return this.currentMatch.playerONickName ?? '';
+  }
+
+  public get opponentNickName(): string {
+    if (!this.currentMatch) return '';
+    if (this.currentMatch.ticPlayerWithXSymbolId === this.myPlayerId) return this.currentMatch.playerONickName ?? '';
+    return this.currentMatch.playerXNickName ?? '';
+  }
+
   public get isMyTurn(): boolean {
     return this.currentPlayerId === this.myPlayerId;
   }
@@ -49,13 +62,6 @@ export class TicMatchComponent implements OnInit {
     return !this.isMyTurn || this.isGameOver || this.currentMatch?.state !== TicMatchState.IN_PROGRESS;
   }
 
-  public get gameResultMessage(): string {
-    if (!this.currentMatch?.isFinished) return '';
-    if (this.currentMatch.isTie) return 'Draw!';
-    if (this.currentMatch.winnerPlayerId === this.myPlayerId) return 'You won!';
-    return 'You lost!';
-  }
-
   public ngOnInit(): void {
     this.currentMatchId = this.route.snapshot.queryParamMap.get('ticMatchId') ?? '';
     this.myPlayerId = this.route.snapshot.queryParamMap.get('ticPlayerId') ?? '';
@@ -66,7 +72,7 @@ export class TicMatchComponent implements OnInit {
         this.currentMatchId = session.matchId;
         this.myPlayerId = session.playerId;
       } else {
-        this.notificationService.showError('No active game session found.', 'Error');
+        this.notificationService.showError('Nenhuma sessao ativa encontrada.', 'Erro');
         this.router.navigate(['/']);
         return;
       }
@@ -79,6 +85,8 @@ export class TicMatchComponent implements OnInit {
             this.connectToMatchHub();
             this.onPlayerJoined();
             this.onPlayerMadeMove();
+            this.onMatchAbandoned();
+            this.onMatchRematch();
           }
         }
       });
@@ -86,15 +94,28 @@ export class TicMatchComponent implements OnInit {
 
   public onCellClick(position: { row: number; col: number }): void {
     if (this.isBoardLocked) return;
-
     const command: IMakePlayerMoveCommand = {
       cellRow: position.row,
       cellCol: position.col,
       matchId: this.currentMatchId,
       playerId: this.myPlayerId
     };
-
     this.ticMatchHubService.makePlayerMove(command);
+  }
+
+  public onAbandonMatch(): void {
+    const command: IAbandonMatchCommand = { matchId: this.currentMatchId };
+    this.ticMatchHubService.abandonMatch(command);
+  }
+
+  public onRematch(): void {
+    const command: IRematchCommand = { previousMatchId: this.currentMatchId };
+    this.ticMatchHubService.rematch(command);
+  }
+
+  public onBackToHome(): void {
+    this.gameSessionService.clear();
+    this.router.navigate(['/']);
   }
 
   private connectToMatchHub(): void {
@@ -109,8 +130,11 @@ export class TicMatchComponent implements OnInit {
       board: response.board,
       ticPlayerWithXSymbolId: response.ticPlayerWithXSymbolId,
       ticPlayerWithOSymbolId: response.ticPlayerWithOSymbolId,
+      playerXNickName: response.playerXNickName,
+      playerONickName: response.playerONickName,
       isFinished: response.isFinished,
       isTie: response.isTie,
+      isAbandoned: response.isAbandoned,
       winnerSymbol: response.winnerSymbol,
       winnerPlayerId: response.winnerPlayerId
     };
@@ -122,11 +146,10 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService.onPlayerJoined().subscribe({
       next: (response: ITicMatchStateResponse) => {
         this.updateMatchState(response);
-
         if (response.state === TicMatchState.IN_PROGRESS) {
-          this.notificationService.showSuccess('Both players connected. Game started!', 'Game');
+          this.notificationService.showSuccess('Ambos jogadores conectados. Jogo iniciado!', 'Jogo');
         } else {
-          this.notificationService.showInfo('Waiting for opponent to join...', 'Game');
+          this.notificationService.showInfo('Aguardando oponente entrar...', 'Jogo');
         }
       }
     });
@@ -136,19 +159,35 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService.onPlayerMadeMove().subscribe({
       next: (response: ITicMatchStateResponse) => {
         this.updateMatchState(response);
-
         if (response.isFinished) {
           this.gameSessionService.clear();
-          if (response.isTie) {
-            this.notificationService.showWarning('Draw! No winner this time.', 'Game Over');
-          } else if (response.winnerPlayerId === this.myPlayerId) {
-            this.notificationService.showSuccess('You won! Congratulations!', 'Game Over');
-          } else {
-            this.notificationService.showError('You lost. Better luck next time!', 'Game Over');
-          }
+          this.showGameOverModal = true;
         } else if (this.isMyTurn) {
-          this.notificationService.showInfo('Your turn!', 'Game');
+          this.notificationService.showInfo('Sua vez!', 'Jogo');
         }
+      }
+    });
+  }
+
+  private onMatchAbandoned(): void {
+    this.ticMatchHubService.onMatchAbandoned().subscribe({
+      next: (response: ITicMatchStateResponse) => {
+        this.updateMatchState(response);
+        this.gameSessionService.clear();
+        this.showGameOverModal = true;
+      }
+    });
+  }
+
+  private onMatchRematch(): void {
+    this.ticMatchHubService.onMatchRematch().subscribe({
+      next: (response: ITicMatchStateResponse) => {
+        this.currentMatchId = response.matchId;
+        this.gameSessionService.save(this.currentMatchId, this.myPlayerId);
+        this.showGameOverModal = false;
+        this.updateMatchState(response);
+        this.connectToMatchHub();
+        this.notificationService.showSuccess('Nova partida criada! Aguardando jogadores...', 'Revanche');
       }
     });
   }

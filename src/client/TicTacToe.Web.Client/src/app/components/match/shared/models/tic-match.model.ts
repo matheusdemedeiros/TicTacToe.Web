@@ -7,8 +7,11 @@ export interface TicMatch {
     state: TicMatchState,
     ticPlayerWithXSymbolId: string,
     ticPlayerWithOSymbolId: string,
+    playerXNickName: string | null,
+    playerONickName: string | null,
     isFinished: boolean,
     isTie: boolean,
+    isAbandoned: boolean,
     winnerSymbol: string | null,
     winnerPlayerId: string | null
 }
