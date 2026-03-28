@@ -90,9 +90,14 @@ namespace TicTacToe.Domain.Entities.MatchModule
 
             Board.MarkCell(simble, positionX, positionY);
             Board.SyncSerializedBoard();
-            SwitchCurrentPlayer();
             DetectWin();
             IsTie();
+
+            if (State == TicMatchState.IN_PROGRESS)
+            {
+                SwitchCurrentPlayer();
+            }
+
             Touch();
         }
 
