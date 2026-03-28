@@ -1,4 +1,4 @@
-﻿import { TicMatchState } from '../../../home/shared/models/match-state.enum'
+import { TicMatchState } from '../../../home/shared/models/match-state.enum'
 import { TIicBoardCell } from '../models/tic-board-cell.model'
 
 export interface IJoinMatchCommand {
@@ -22,6 +22,7 @@ export interface IRematchCommand {
 
 export interface ITicMatchStateResponse {
     matchId: string,
+    shortCode: string,
     board: TIicBoardCell[][],
     state: TicMatchState,
     currentPlayerId: string,

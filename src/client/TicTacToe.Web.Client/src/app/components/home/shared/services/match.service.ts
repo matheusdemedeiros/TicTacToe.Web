@@ -28,6 +28,10 @@ export class MatchService {
     return this.http.post<IAddTicPlayerToMatchResponse>(this.apiUrl + `/match/${matchId}/add-player`, command);
   }
 
+  public resolveByCode(code: string): Observable<{ matchId: string; shortCode: string }> {
+    return this.http.get<{ matchId: string; shortCode: string }>(this.apiUrl + '/match/code/' + encodeURIComponent(code));
+  }
+
   public retrieveById(matchId: string): Observable<IRetrieveTicMatchByIdResponse> {
     return this.http.get<IRetrieveTicMatchByIdResponse>(this.apiUrl + `/match/${matchId}`);
   }

@@ -1,4 +1,5 @@
-﻿import { Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { mergeMap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -17,7 +18,7 @@ import { PlayModeTypes } from '../home/shared/models/play-mode-types.enum';
 })
 export class LobbyComponent {
   protected playMode: PlayModeTypes = PlayModeTypes.PlayerVsPlayer;
-  protected joinMatchId: string = '';
+  protected joinCode: string = '';
   protected playModeTypes = PlayModeTypes;
 
   private router = inject(Router);
@@ -46,12 +47,15 @@ export class LobbyComponent {
   }
 
   public onJoinMatch(): void {
-    if (!this.joinMatchId.trim()) {
-      this.notificationService.showWarning('Informe o ID da partida.', 'Aviso');
+    if (!this.joinCode.trim()) {
+      this.notificationService.showWarning('Informe o codigo da partida.', 'Aviso');
       return;
     }
 
-    this.matchService.addPlayer({ playerId: this.playerId, matchId: this.joinMatchId.trim() }, this.joinMatchId.trim())
+    this.matchService.resolveByCode(this.joinCode.trim().toUpperCase())
+      .pipe(
+        mergeMap((resolved) => this.matchService.addPlayer({ playerId: this.playerId, matchId: resolved.matchId }, resolved.matchId))
+      )
       .subscribe({
         next: (response) => {
           this.gameSession.save(response.matchId, this.playerId);

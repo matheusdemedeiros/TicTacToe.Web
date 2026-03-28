@@ -8,6 +8,7 @@ export interface ICreateTicMatchCommand {
 
 export interface ICreateTicMatchResponse {
     matchId: string,
+    shortCode: string,
     ticPlayerWithXSymbolId: string;
     TicPlayerWithOSymbolId: string;
 }

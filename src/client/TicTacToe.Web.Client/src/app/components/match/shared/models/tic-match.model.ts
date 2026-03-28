@@ -1,8 +1,9 @@
-﻿import { TicMatchState } from '../../../home/shared/models/match-state.enum';
+import { TicMatchState } from '../../../home/shared/models/match-state.enum';
 import { TIicBoardCell } from './tic-board-cell.model';
 
 export interface TicMatch {
     id: string,
+    shortCode: string,
     board: TIicBoardCell[][],
     state: TicMatchState,
     ticPlayerWithXSymbolId: string,

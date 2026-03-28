@@ -25,6 +25,7 @@ export class TicMatchComponent implements OnInit, OnDestroy {
   protected currentPlayerSymbol: string = '';
   protected currentMatch: TicMatch | undefined;
   protected showGameOverModal: boolean = false;
+  protected codeCopied: boolean = false;
 
   private subscriptions: Subscription[] = [];
   private route = inject(ActivatedRoute);
@@ -179,9 +180,30 @@ export class TicMatchComponent implements OnInit, OnDestroy {
     );
   }
 
+  public onCopyCode(): void {
+    const code = this.currentMatch?.shortCode ?? '';
+    navigator.clipboard.writeText(code).then(() => {
+      this.codeCopied = true;
+      setTimeout(() => this.codeCopied = false, 2000);
+    });
+  }
+
+  public onShareLink(): void {
+    const code = this.currentMatch?.shortCode ?? '';
+    const link = window.location.origin + '/join?code=' + code;
+    if (navigator.share) {
+      navigator.share({ title: 'Jogo da Velha', text: 'Entre na partida! Codigo: ' + code, url: link });
+    } else {
+      navigator.clipboard.writeText(link).then(() => {
+        this.notificationService.showSuccess('Link copiado!', 'Compartilhar');
+      });
+    }
+  }
+
   private updateMatchState(response: ITicMatchStateResponse): void {
     this.currentMatch = {
       id: response.matchId,
+      shortCode: response.shortCode,
       state: response.state,
       board: response.board,
       ticPlayerWithXSymbolId: response.ticPlayerWithXSymbolId,

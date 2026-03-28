@@ -1,7 +1,8 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { LobbyComponent } from './components/lobby/lobby.component';
 import { TicMatchComponent } from './components/match/tic-match/tic-match.component';
+import { JoinComponent } from './components/join/join.component';
 import { playerSessionGuard } from './core/player-session.guard';
 import { gameSessionGuard } from './core/game-session.guard';
 
@@ -14,6 +15,10 @@ export const routes: Routes = [
         path: 'lobby',
         component: LobbyComponent,
         canActivate: [playerSessionGuard]
+    },
+    {
+        path: 'join',
+        component: JoinComponent
     },
     {
         path: 'ticmatch',

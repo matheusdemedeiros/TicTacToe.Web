@@ -1,4 +1,4 @@
-﻿<div class="bg-black min-h-screen flex items-center justify-center px-4 py-8">
+<div class="bg-black min-h-screen flex items-center justify-center px-4 py-8">
   <div class="w-full max-w-lg space-y-8">
 
     <!-- Header -->
@@ -40,10 +40,10 @@
         <h2 class="text-lg font-bold text-white">Entrar em Partida</h2>
 
         <input
-          [(ngModel)]="joinMatchId"
+          [(ngModel)]="joinCode"
           (keyup.enter)="onJoinMatch()"
           type="text"
-          placeholder="Cole o ID da partida aqui"
+          placeholder="Ex: X7K2M9"
           class="w-full p-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 transition"
         />
 
