@@ -170,7 +170,7 @@ export class RegisterFlowComponent implements OnDestroy {
         }))
       .subscribe({
         next: () => {
-          this.notificationService.showSuccess('Match created successfully!', 'Match');
+          this.notificationService.showSuccess('Partida criada com sucesso!', 'Partida');
           this.navigateOnSuccess();
         }
       });
@@ -191,7 +191,7 @@ export class RegisterFlowComponent implements OnDestroy {
       .subscribe({
         next: (response: IAddTicPlayerToMatchResponse) => {
           this.ticMatchId = response.matchId;
-          this.notificationService.showSuccess('Joined match successfully!', 'Match');
+          this.notificationService.showSuccess('Entrou na partida com sucesso!', 'Partida');
           this.navigateOnSuccess();
         }
       });

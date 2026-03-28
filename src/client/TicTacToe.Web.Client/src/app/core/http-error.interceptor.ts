@@ -1,4 +1,4 @@
-﻿import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 
@@ -15,9 +15,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       if (apiError?.message) {
         notificationService.showError(apiError.message);
       } else if (error.status === 0) {
-        notificationService.showError('Unable to connect to the server.', 'Connection Error');
+        notificationService.showError('Nao foi possivel conectar ao servidor.', 'Erro de Conexao');
       } else {
-        notificationService.showError('An unexpected error occurred.', 'Error');
+        notificationService.showError('Ocorreu um erro inesperado.', 'Erro');
       }
 
       return throwError(() => error);

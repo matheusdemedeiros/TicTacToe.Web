@@ -4,7 +4,7 @@ import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { IJoinMatchCommand, IMakePlayerMoveCommand, ITicMatchStateResponse } from './hub-messages.model';
+import { IAbandonMatchCommand, IJoinMatchCommand, IMakePlayerMoveCommand, IRematchCommand, ITicMatchStateResponse } from './hub-messages.model';
 import { NotificationService } from '../../../../core/notification.service';
 
 @Injectable({ providedIn: 'root' })
@@ -24,14 +24,44 @@ export class TicMatchHubService {
   public joinMatch(joinMatchCommand: IJoinMatchCommand): void {
     this.hubConnection!.invoke('JoinMatchAsync', joinMatchCommand)
       .catch((err: Error) => {
-        this.notificationService.showError(err.message || 'Failed to join match.', 'SignalR');
+        this.notificationService.showError(err.message || 'Falha ao entrar na partida.', 'SignalR');
       });
+  }
+
+  public abandonMatch(command: IAbandonMatchCommand): void {
+    this.hubConnection!.invoke('AbandonMatchAsync', command)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Falha ao abandonar partida.', 'SignalR');
+      });
+  }
+
+  public rematch(command: IRematchCommand): void {
+    this.hubConnection!.invoke('RematchAsync', command)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Falha ao criar revanche.', 'SignalR');
+      });
+  }
+
+  public onMatchAbandoned(): Observable<ITicMatchStateResponse> {
+    return new Observable((observer) => {
+      this.hubConnection?.on('TicMatchAbandoned', (match) => {
+        observer.next(match);
+      });
+    });
+  }
+
+  public onMatchRematch(): Observable<ITicMatchStateResponse> {
+    return new Observable((observer) => {
+      this.hubConnection?.on('TicMatchRematch', (match) => {
+        observer.next(match);
+      });
+    });
   }
 
   public makePlayerMove(makePlayerMoveCommand: IMakePlayerMoveCommand): void {
     this.hubConnection!.invoke('MakePlayerMoveAsync', makePlayerMoveCommand)
       .catch((err: Error) => {
-        this.notificationService.showError(err.message || 'Failed to make move.', 'SignalR');
+        this.notificationService.showError(err.message || 'Falha ao fazer jogada.', 'SignalR');
       });
   }
 
@@ -62,7 +92,7 @@ export class TicMatchHubService {
 
     this.hubConnection.onclose(() => {
       this.connectionIsEstablished = false;
-      this.notificationService.showWarning('Connection lost. Attempting to reconnect...', 'Connection');
+      this.notificationService.showWarning('Conexao perdida. Reconectando...', 'Conexao');
       setTimeout(() => { this.startConnection(); }, 5000);
     });
   }
@@ -75,7 +105,7 @@ export class TicMatchHubService {
         this.connectionEstablished.emit(true);
       })
       .catch(() => {
-        this.notificationService.showError('Unable to connect to game server. Retrying...', 'Connection');
+        this.notificationService.showError('Nao foi possivel conectar ao servidor. Tentando novamente...', 'Conexao');
         setTimeout(() => { this.startConnection(); }, 5000);
       });
   }
