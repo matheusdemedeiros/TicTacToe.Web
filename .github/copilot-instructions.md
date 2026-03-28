@@ -74,8 +74,9 @@ Dependency rule: inner layers do not know about outer layers.
 | Method | Route | Request | Response |
 |--------|-------|---------|----------|
 | POST | /api/Player | { name, nickName } | { id } (get-or-create: returns existing player if nickname matches) |
-| POST | /api/Match | { playMode, initialPlayerId } | { matchId, ticPlayerWithXSymbolId, ticPlayerWithOSymbolId } |
+| POST | /api/Match | { playMode, initialPlayerId } | { matchId, shortCode, ticPlayerWithXSymbolId, ticPlayerWithOSymbolId } |
 | POST | /api/Match/{id}/add-player | { playerId, matchId } | { matchId, playerId, playerName, nickname, ticPlayerWithXSymbolId, ticPlayerWithOSymbolId } |
+| GET | /api/Match/code/{code} | - | { matchId, shortCode } |
 | GET | /api/Match/{id} | - | { found, ticMatchState, playerNumbers, matchId } |
 
 ### SignalR Hub: /Ticmatchhub
@@ -95,7 +96,7 @@ Dependency rule: inner layers do not know about outer layers.
 
 ## Domain Entities (Backend)
 
-- **TicMatch**: Match with Players, Board, State, Score, CurrentPlayer, PlayMode
+- **TicMatch**: Match with Players, Board, State, Score, CurrentPlayer, PlayMode, ShortCode (6-char unique invite code)
 - **TicPlayer**: Player with Name, NickName, Symbol (X or O)
 - **TicBoard**: 3x3 board, serialized as JSON in DB via SerializedBoard
 - **TicBoardCell**: Individual cell with Symbol and State
@@ -110,7 +111,39 @@ Both SignalR events (TicPlayerJoined, TicPlayerMadeMove) return the same complet
 
 Built via `TicMatchStateResponse.FromMatch(match)` factory in `Application/UseCases/Match/Shared/`.
 
-### Frontend Game Session
+### Frontend Routes and Guards
+
+| Route | Component | Guard | Purpose |
+|-------|-----------|-------|---------|
+| `/` | LoginComponent | - | Nickname entry (session-based identity) |
+| `/lobby` | LobbyComponent | playerSessionGuard | Create or join match via ShortCode |
+| `/join?code=X` | JoinComponent | - | Direct invite link (resolves code, adds player, redirects) |
+| `/ticmatch` | TicMatchComponent | playerSessionGuard + gameSessionGuard | Gameplay screen |
+
+### Player and Game Sessions
+
+- `PlayerSessionService` persists playerId + nickName in localStorage (identity)
+- `GameSessionService` persists matchId + playerId in localStorage (active match)
+- `playerSessionGuard` redirects to `/` if no player session
+- `gameSessionGuard` redirects to `/lobby` if no game session or query params
+- On match screen load, falls back to localStorage if query params are missing (enables reconnection)
+- Game session is cleared when the match finishes or is abandoned
+
+### Match ShortCode (Invite System)
+
+- Each match gets a unique 6-character alphanumeric code (e.g., `X7K2M9`)
+- Generated with `RandomNumberGenerator` (crypto-safe), chars: `ABCDEFGHJKLMNPQRSTUVWXYZ23456789` (no ambiguous 0/O, 1/I/L)
+- Indexed as unique in database
+- Used for: lobby join field, invite links (`/join?code=X`), clipboard copy, Web Share API
+- Endpoint: `GET /api/Match/code/{code}` resolves ShortCode to MatchId
+
+### SignalR Hub Lifecycle
+
+- `TicMatchHubService` is a singleton (`providedIn: 'root'`)
+- Uses `BehaviorSubject<boolean>` for connection state (replays last value to new subscribers)
+- `clearHandlers()` removes all `on()` listeners — called in `ngOnInit` and `ngOnDestroy`  
+- Component subscribes with `filter(true), take(1)` to avoid duplicate handler registration
+- All subscriptions tracked in array and unsubscribed in `ngOnDestroy`
 
 - `GameSessionService` persists matchId + playerId in localStorage
 - On match screen load, falls back to localStorage if query params are missing (enables reconnection)

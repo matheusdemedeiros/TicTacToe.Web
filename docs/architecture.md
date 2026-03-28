@@ -86,7 +86,10 @@ Angular 19 application with standalone components and feature-based structure:
 ```
 src/app/
   components/
-    home/                         # Lobby: create player, create/join match
+    login/                        # Nickname entry screen
+    lobby/                        # Create match or join via ShortCode
+    join/                         # Direct invite link handler (/join?code=X)
+    home/                         # (legacy register flow)
       shared/
         models/                   # Interfaces and enums
         services/                 # MatchService, PlayerService (HTTP)
@@ -97,7 +100,12 @@ src/app/
       tic-match/                  # Match orchestrator component
       tic-board/                  # 3x3 board renderer
       tic-board-cell/             # Individual cell component
-  core/                           # Cross-cutting (NotificationService)
+  core/                           # Cross-cutting services
+    notification.service.ts        # Toastr notifications
+    player-session.service.ts      # Player identity (localStorage)
+    game-session.service.ts        # Active match session (localStorage)
+    player-session.guard.ts        # Route guard: requires player session
+    game-session.guard.ts          # Route guard: requires game session
 ```
 
 ### Key Patterns
@@ -295,6 +303,7 @@ TicMatch
   |     |-- Tie: bool
   |-- CurrentPlayer: TicPlayer?
   |-- PlayMode: PlayModeType (PlayerVsPlayer | PlayerVsComputer)
+  |-- ShortCode: string (6-char unique invite code, crypto-random)
 
 TicPlayer
   |-- Name: string
