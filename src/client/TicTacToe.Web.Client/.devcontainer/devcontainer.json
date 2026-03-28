@@ -1,0 +1,16 @@
+{
+  "name": "Angular 19 Dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [4200],
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Angular.ng-template",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}
