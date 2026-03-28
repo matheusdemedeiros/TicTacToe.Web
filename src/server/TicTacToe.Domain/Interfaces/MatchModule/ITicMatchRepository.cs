@@ -7,6 +7,7 @@ namespace TicTacToe.Domain.Interfaces.MatchModule
     {
         Task CreateAsync(TicMatch match);
         Task<TicMatch?> RetrieveByIdAsync(Guid id);
+        Task<TicMatch?> RetrieveByShortCodeAsync(string shortCode);
         Task<List<TicMatch>> RetrieveAllAsync();
         Task UpdateAsync(TicMatch match);
         Task DeleteAsync(Guid id);

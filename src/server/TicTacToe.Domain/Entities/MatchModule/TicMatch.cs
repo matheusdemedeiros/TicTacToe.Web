@@ -13,9 +13,12 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public virtual TicPlayer? CurrentPlayer { get; private set; }
         public Guid? CurrentPlayerId { get; set; }
         public Guid TicBoardId { get; set; }
+        public string ShortCode { get; private set; }
 
         private string _winningSimbol;
         private const int MAX_PLAYERS = 2;
+        private const int SHORT_CODE_LENGTH = 6;
+        private const string SHORT_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
         public TicMatch() : base()
         {
@@ -25,6 +28,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
             _winningSimbol = string.Empty;
             TicScore = new TicScore();
             CurrentPlayer = null;
+            ShortCode = GenerateShortCode();
         }
 
         public TicMatch(PlayModeType playMode) : this()
@@ -149,6 +153,21 @@ namespace TicTacToe.Domain.Entities.MatchModule
         private void SetPlayerSymbol(TicPlayer ticPlayer)
         {
             ticPlayer.SetSymbol(Players.Count == 0 ? "X" : "O");
+        }
+
+        private static string GenerateShortCode()
+        {
+            using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+            var bytes = new byte[SHORT_CODE_LENGTH];
+            rng.GetBytes(bytes);
+
+            var chars = new char[SHORT_CODE_LENGTH];
+            for (int i = 0; i < SHORT_CODE_LENGTH; i++)
+            {
+                chars[i] = SHORT_CODE_CHARS[bytes[i] % SHORT_CODE_CHARS.Length];
+            }
+
+            return new string(chars);
         }
     }
 }
