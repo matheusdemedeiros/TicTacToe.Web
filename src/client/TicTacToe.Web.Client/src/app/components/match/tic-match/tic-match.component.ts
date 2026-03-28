@@ -1,4 +1,5 @@
-﻿import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, take, Subscription } from 'rxjs';
 
@@ -12,7 +13,7 @@ import { GameSessionService } from '../../../core/game-session.service';
 
 @Component({
   selector: 'app-tic-match',
-  imports: [TicBoardComponent],
+  imports: [TicBoardComponent, NgClass],
   standalone: true,
   templateUrl: './tic-match.component.html',
   styleUrl: './tic-match.component.scss'
