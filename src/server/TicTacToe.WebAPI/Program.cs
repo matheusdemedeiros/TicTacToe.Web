@@ -4,6 +4,7 @@ using TicTacToe.Application.Services;
 using TicTacToe.Infra.Data;
 using TicTacToe.WebAPI.Extensions;
 using TicTacToe.WebAPI.Hubs;
+using TicTacToe.WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddSignalR(e =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseCORSConfig();
 
 app.MapHub<TicMatchHub>("/Ticmatchhub");

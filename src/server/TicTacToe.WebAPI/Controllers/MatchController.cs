@@ -28,13 +28,7 @@ namespace TicTacToe.Infra.Data.Controllers
         public async Task<IActionResult> CreateMatch(CreateTicMatchCommand command)
         {
             var result = await _mediator.Send(command);
-
-            if (result.MatchId != Guid.Empty)
-            {
-                return Created(result.MatchId.ToString(), result);
-            }
-
-            return BadRequest("Failed to create match.");
+            return Created(result.MatchId.ToString(), result);
         }
 
         /// <summary>
@@ -50,13 +44,7 @@ namespace TicTacToe.Infra.Data.Controllers
         {
             command.MatchId = matchId.ToString();
             var result = await _mediator.Send(command);
-
-            if (result.MatchId != Guid.Empty)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest("Failed to add player.");
+            return Ok(result);
         }
 
         /// <summary>
@@ -71,12 +59,7 @@ namespace TicTacToe.Infra.Data.Controllers
         {
             var command = new RetriveTicMatchByIdQuery() { MatchId = matchId };
             var result = await _mediator.Send(command);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest("Failed to retrive match.");
+            return Ok(result);
         }
     }
 }

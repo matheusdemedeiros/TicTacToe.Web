@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Application.UseCases.Match.MakeMove
 {
@@ -23,12 +24,12 @@ namespace TicTacToe.Application.UseCases.Match.MakeMove
 
             if (match == null)
             {
-                throw new Exception("Match not found.");
+                throw new DomainException("Match not found.");
             }
 
             if (match.CurrentPlayer == null || match.CurrentPlayer.Id != playerId)
             {
-                throw new Exception("It's not your turn.");
+                throw new DomainException("It's not your turn.");
             }
 
             match.MakePlay(match.CurrentPlayer.Symbol, request.CellRow, request.CellCol);

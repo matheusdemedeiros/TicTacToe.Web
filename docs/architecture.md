@@ -1,4 +1,4 @@
-﻿# Architecture
+# Architecture
 
 Technical reference for the TicTacToe.Web application architecture, API contracts, and domain model.
 
@@ -112,6 +112,50 @@ src/app/
 
 ---
 
+## Error Handling
+
+### Backend Flow
+
+```
+Exception thrown in Handler/Domain
+        |
+        v
+GlobalExceptionHandlerMiddleware
+        |
+        +--> DomainException  --> 400 { message, errorCode: ""DOMAIN_ERROR"", statusCode: 400 }
+        +--> FormatException  --> 400 { message, errorCode: ""VALIDATION_ERROR"", statusCode: 400 }
+        +--> Exception        --> 500 { message, errorCode: ""INTERNAL_ERROR"", statusCode: 500 }
+```
+
+### Frontend Flow
+
+```
+HTTP Error Response from Backend
+        |
+        v
+httpErrorInterceptor (global)
+        |
+        +--> Extracts ApiErrorResponse.message
+        +--> Shows toastr notification (red toast)
+        +--> Re-throws error for component-level handling if needed
+```
+
+### Error Response Format
+
+```json
+{
+  ""message"": ""Player with this nickname already exists."",
+  ""errorCode"": ""DOMAIN_ERROR"",
+  ""statusCode"": 400
+}
+```
+
+### SignalR Error Handling
+
+Hub method errors are caught via `.catch()` in `TicMatchHubService` and displayed as toastr notifications.
+Connection drops trigger automatic reconnection with user feedback.
+
+---
 ## API Reference
 
 ### REST Endpoints

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Application.UseCases.Match.JoinMatch;
 using TicTacToe.Application.UseCases.Match.MakeMove;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.WebAPI.Hubs
 {
@@ -21,7 +22,7 @@ namespace TicTacToe.WebAPI.Hubs
 
             if (result == null)
             {
-                throw new Exception("Match not found or invalid command.");
+                throw new DomainException("Match not found or invalid command.");
             }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(Guid.Parse(command.MatchId)));
@@ -33,7 +34,7 @@ namespace TicTacToe.WebAPI.Hubs
             var result = await _mediator.Send(command);
             if (result == null)
             {
-                throw new Exception("Invalid move or match not found.");
+                throw new DomainException("Invalid move or match not found.");
             }
             await NotifyAllPlayersFromMatchAsync<MakePlayerMoveResponse>(result, Guid.Parse(command.MatchId), "TicPlayerMadeMove");
         }

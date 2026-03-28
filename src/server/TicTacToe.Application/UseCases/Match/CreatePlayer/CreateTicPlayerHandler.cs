@@ -2,6 +2,7 @@
 using TicTacToe.Domain.Entities.MatchModule;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Application.UseCases.Match.CreatePlayer
 {
@@ -22,7 +23,7 @@ namespace TicTacToe.Application.UseCases.Match.CreatePlayer
 
             if (exists)
             {
-                throw new Exception("Player with this nickname already exists.");
+                throw new DomainException("Player with this nickname already exists.");
             }
 
             var ticPlayer = new TicPlayer(request.name, request.nickName);

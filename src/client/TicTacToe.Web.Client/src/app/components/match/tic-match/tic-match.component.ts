@@ -1,10 +1,12 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 import { TicMatchHubService } from '../shared/services/tic-match-hub.service';
 import { TicMatch } from '../shared/models/tic-match.model';
 import { IJoinMatchCommand, IJoinMatchResponse, IMakePlayerMoveCommand, IMakePlayerMoveResponse } from '../shared/services/hub-messages.model';
+import { TicMatchState } from '../../home/shared/models/match-state.enum';
+import { NotificationService } from '../../../core/notification.service';
 
 @Component({
   selector: 'app-tic-match',
@@ -22,13 +24,9 @@ export class TicMatchComponent implements OnInit {
 
   protected currentMatch: TicMatch | undefined;
 
-  private route: ActivatedRoute;
-  private ticMatchHubService: TicMatchHubService;
-
-  constructor() {
-    this.route = inject(ActivatedRoute);
-    this.ticMatchHubService = inject(TicMatchHubService)
-  }
+  private route = inject(ActivatedRoute);
+  private ticMatchHubService = inject(TicMatchHubService);
+  private notificationService: NotificationService = inject(NotificationService);
 
   public get myMatchSymbol(): string {
     if (!this.currentMatch) return '';
@@ -42,6 +40,10 @@ export class TicMatchComponent implements OnInit {
     }
 
     return symbolMap[this.myPlayerId] ?? '';
+  }
+
+  public get isMyTurn(): boolean {
+    return this.currentPlayerId === this.myPlayerId;
   }
 
   public ngOnInit(): void {
@@ -61,6 +63,11 @@ export class TicMatchComponent implements OnInit {
   }
 
   public onCellClick(position: { row: number; col: number }): void {
+    if (!this.isMyTurn) {
+      this.notificationService.showWarning("It's not your turn.", 'Wait');
+      return;
+    }
+
     const command: IMakePlayerMoveCommand = {
       cellRow: position.row,
       cellCol: position.col,
@@ -90,6 +97,12 @@ export class TicMatchComponent implements OnInit {
         }
         this.currentPlayerId = match.currentPlayerId;
         this.currentPlayerSymbol = match.currentPlayerSymbol;
+
+        if (match.state === TicMatchState.IN_PROGRESS) {
+          this.notificationService.showSuccess('Both players connected. Game started!', 'Game');
+        } else {
+          this.notificationService.showInfo('Waiting for opponent to join...', 'Game');
+        }
       }
     })
   }
@@ -105,6 +118,17 @@ export class TicMatchComponent implements OnInit {
 
         this.currentPlayerId = match.currentPlayerId;
         this.currentPlayerSymbol = match.currentPlayerSymbol;
+
+        if (match.state === TicMatchState.FINISHED) {
+          const iWon = match.currentPlayerId !== this.myPlayerId;
+          if (iWon) {
+            this.notificationService.showSuccess('You won! Congratulations!', 'Game Over');
+          } else {
+            this.notificationService.showError('You lost. Better luck next time!', 'Game Over');
+          }
+        } else if (this.isMyTurn) {
+          this.notificationService.showInfo('Your turn!', 'Game');
+        }
       }
     })
   }

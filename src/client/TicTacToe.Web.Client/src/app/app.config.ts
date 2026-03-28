@@ -1,6 +1,7 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { httpErrorInterceptor } from './core/http-error.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
@@ -11,8 +12,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([httpErrorInterceptor])),
     provideAnimations(),
-    provideToastr({ preventDuplicates: true, timeOut: 900 }),
+    provideToastr({ preventDuplicates: true, timeOut: 4000, positionClass: 'toast-top-right', progressBar: true }),
   ]
 };

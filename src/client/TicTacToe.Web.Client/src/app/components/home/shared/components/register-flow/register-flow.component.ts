@@ -166,12 +166,10 @@ export class RegisterFlowComponent implements OnDestroy {
           return of(true);
         }))
       .subscribe({
-        next: (response: any) => {
+        next: () => {
+          this.notificationService.showSuccess('Match created successfully!', 'Match');
           this.navigateOnSuccess();
-
-          this.notificationService.showSuccessMessage(response, "Resposta");
-        },
-        error: (error: any) => console.log('error', error)
+        }
       });
   }
 
@@ -190,9 +188,9 @@ export class RegisterFlowComponent implements OnDestroy {
       .subscribe({
         next: (response: IAddTicPlayerToMatchResponse) => {
           this.ticMatchId = response.matchId;
+          this.notificationService.showSuccess('Joined match successfully!', 'Match');
           this.navigateOnSuccess();
-        },
-        error: (error: Error) => console.log('error', error)
+        }
       });
   }
 
@@ -206,19 +204,19 @@ export class RegisterFlowComponent implements OnDestroy {
   }
 
   /*
-  1 - criação do player;
+  1 - criaÃƒÂ§ÃƒÂ£o do player;
   2 - escolher o playmode;
   3 - criar a partida;
   4 - adicionar o player na partida;
-  (frontend é redirecionado para a tela do tabuleiro).
+  (frontend ÃƒÂ© redirecionado para a tela do tabuleiro).
   5 - Iniciar a partida
   5.a - Se for PlayerVsPlayer => fazer o gerenciamento com o signalr;
     (o segundo player precisa incluir o id da partida na tela e entrar nela);
-    A partir deste momento, o tabuleiro será desbloqueado em ambas as telas,
+    A partir deste momento, o tabuleiro serÃƒÂ¡ desbloqueado em ambas as telas,
     permitindo que sejam feitas as chamadas de movimento.
-  5.b - Se for PlayerVsComputer => a cada movimento do usuário, deve ser gerado 
-  um movimento randômico e válido para a partida no backend; Essa informação será
-  retornada para a tela (talvez utilizando a técnica de pooling);
+  5.b - Se for PlayerVsComputer => a cada movimento do usuÃƒÂ¡rio, deve ser gerado 
+  um movimento randÃƒÂ´mico e vÃƒÂ¡lido para a partida no backend; Essa informaÃƒÂ§ÃƒÂ£o serÃƒÂ¡
+  retornada para a tela (talvez utilizando a tÃƒÂ©cnica de pooling);
 
   */
 }

@@ -1,4 +1,4 @@
-﻿# TicTacToe.Web - Copilot Instructions
+# TicTacToe.Web - Copilot Instructions
 
 ## Project Purpose
 
@@ -100,6 +100,34 @@ Dependency rule: inner layers do not know about outer layers.
 - **TicBoard**: 3x3 board, serialized as JSON in DB via SerializedBoard
 - **TicBoardCell**: Individual cell with Symbol and State
 - **TicScore**: Score (WinningPlayer, WinningSymbol, Tie)
+
+## Error Handling
+
+### Backend - Global Exception Middleware
+All exceptions are caught by `GlobalExceptionHandlerMiddleware` and returned as structured JSON:
+
+```json
+{ "message": "Player with this nickname already exists.", "errorCode": "DOMAIN_ERROR", "statusCode": 400 }
+```
+
+| Exception Type | HTTP Status | errorCode |
+|----------------|-------------|-----------|
+| `DomainException` | 400 Bad Request | `DOMAIN_ERROR` |
+| `FormatException` | 400 Bad Request | `VALIDATION_ERROR` |
+| `Exception` (unhandled) | 500 Internal Server Error | `INTERNAL_ERROR` |
+
+- Handlers MUST throw `DomainException` for business rule violations (never return null or throw generic Exception)
+- Controllers do NOT handle errors manually — the middleware handles everything
+- Response model: `ApiErrorResponse` (message, errorCode, statusCode)
+
+### Frontend - HTTP Error Interceptor
+- `httpErrorInterceptor` (functional interceptor) catches all HTTP errors globally
+- Extracts `message` from the backend `ApiErrorResponse` and shows it via `NotificationService` (ngx-toastr)
+- No need for `error:` callbacks in `subscribe()` for API calls — the interceptor handles display automatically
+- SignalR errors are caught in `TicMatchHubService` via `.catch()` on `invoke()` calls
+
+### Frontend - Notification Service
+`NotificationService` provides: `showSuccess()`, `showError()`, `showWarning()`, `showInfo()`
 
 ## Code Conventions
 
