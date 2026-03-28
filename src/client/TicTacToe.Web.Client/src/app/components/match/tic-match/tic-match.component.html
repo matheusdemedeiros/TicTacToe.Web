@@ -1,27 +1,44 @@
-<div class="bg-black min-h-screen flex items-center justify-center px-4">
+﻿<div class="bg-black min-h-screen flex items-center justify-center px-4">
   <div class="bg-black backdrop-blur-md p-8 rounded-3xl w-full max-w-md text-center space-y-8">
 
     <div class="space-y-1">
       <h2 class="text-2xl font-extrabold text-white">Tic Tac Toe</h2>
-      <p class="text-sm text-indigo-500">ID da Partida: <span class="text-gray-500 font-medium">{{ currentMatchId
-          }}</span></p>
-      <p class="text-sm text-indigo-500">Seu ID: <span class="text-gray-500 font-medium">{{ myPlayerId }}</span>
-      </p>
-      <p class="text-sm text-indigo-500">Seu símbolo: <span class="text-gray-500 font-medium">{{ myMatchSymbol }}</span>
-      </p>
+      <p class="text-sm text-indigo-500">Match ID: <span class="text-gray-500 font-medium">{{ currentMatchId }}</span></p>
+      <p class="text-sm text-indigo-500">Your symbol: <span class="text-white font-bold text-lg">{{ myMatchSymbol }}</span></p>
     </div>
 
-    <div class="flex items-center gap-2 justify-center">
-      <p class="text-sm text-gray-500">Vez do jogador:</p>
-      <p class="text-4xl font-bold text-indigo-500 tracking-wider">{{ currentPlayerSymbol }}</p>
-    </div>
+    @if (!isGameOver) {
+      <div class="flex items-center gap-2 justify-center">
+        @if (currentMatch?.state === 1) {
+          <p class="text-sm text-gray-500">{{ isMyTurn ? "Your turn!" : "Waiting for opponent..." }}</p>
+          <p class="text-4xl font-bold text-indigo-500 tracking-wider">{{ currentPlayerSymbol }}</p>
+        } @else {
+          <p class="text-sm text-gray-400">Waiting for opponent to join...</p>
+        }
+      </div>
+    }
 
-    <app-tic-board [currentMatch]="currentMatch" (cellClick)="onCellClick($event)"></app-tic-board>
+    @if (isGameOver) {
+      <div class="rounded-2xl border border-indigo-500/30 bg-zinc-900 p-6 space-y-3">
+        <p class="text-lg font-bold text-white">Game Over</p>
+        @if (currentMatch?.isTie) {
+          <p class="text-4xl">&#129309;</p>
+          <p class="text-gray-400">Draw! No winner this time.</p>
+        } @else if (currentMatch?.winnerPlayerId === myPlayerId) {
+          <p class="text-4xl">&#127942;</p>
+          <p class="text-green-400 font-semibold">You won! Congratulations!</p>
+        } @else {
+          <p class="text-4xl">&#128546;</p>
+          <p class="text-red-400 font-semibold">You lost. Better luck next time!</p>
+        }
+      </div>
+    }
 
-    <button
-      class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-md w-full">
-      Abandonar Partida
-    </button>
+    <app-tic-board
+      [currentMatch]="currentMatch"
+      [disabled]="isBoardLocked"
+      (cellClick)="onCellClick($event)">
+    </app-tic-board>
 
   </div>
 </div>

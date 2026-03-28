@@ -4,7 +4,7 @@ import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { IJoinMatchCommand, IMakePlayerMoveCommand } from './hub-messages.model';
+import { IJoinMatchCommand, IMakePlayerMoveCommand, ITicMatchStateResponse } from './hub-messages.model';
 import { NotificationService } from '../../../../core/notification.service';
 
 @Injectable({ providedIn: 'root' })
@@ -35,7 +35,7 @@ export class TicMatchHubService {
       });
   }
 
-  public onPlayerJoined(): Observable<any> {
+  public onPlayerJoined(): Observable<ITicMatchStateResponse> {
     return new Observable((observer) => {
       this.hubConnection?.on('TicPlayerJoined', (match) => {
         observer.next(match);
@@ -43,7 +43,7 @@ export class TicMatchHubService {
     });
   }
 
-  public onPlayerMadeMove(): Observable<any> {
+  public onPlayerMadeMove(): Observable<ITicMatchStateResponse> {
     return new Observable((observer) => {
       this.hubConnection?.on('TicPlayerMadeMove', (match) => {
         observer.next(match);

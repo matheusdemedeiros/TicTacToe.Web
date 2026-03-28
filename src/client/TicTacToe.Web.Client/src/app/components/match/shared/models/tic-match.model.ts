@@ -1,18 +1,14 @@
-﻿import { TicMatchState } from "../../../home/shared/models/match-state.enum";
-import { PlayModeTypes } from "../../../home/shared/models/play-mode-types.enum";
-import { TicPlayer } from "../../../home/shared/models/player.model";
-import { TIicBoardCell } from "./tic-board-cell.model";
-import { TicScore } from "./tic-score.model";
+﻿import { TicMatchState } from '../../../home/shared/models/match-state.enum';
+import { TIicBoardCell } from './tic-board-cell.model';
 
 export interface TicMatch {
-    board: TIicBoardCell[][],
-    // createdAt: Date,
     id: string,
-    // playMode: PlayModeTypes,
-    // players: TicPlayer[]
+    board: TIicBoardCell[][],
     state: TicMatchState,
-    // ticScore: TicScore,
-    // updatedAd: Date,
-    ticPlayerWithXSymbolId?: string;
-    ticPlayerWithOSymbolId?: string;
+    ticPlayerWithXSymbolId: string,
+    ticPlayerWithOSymbolId: string,
+    isFinished: boolean,
+    isTie: boolean,
+    winnerSymbol: string | null,
+    winnerPlayerId: string | null
 }
