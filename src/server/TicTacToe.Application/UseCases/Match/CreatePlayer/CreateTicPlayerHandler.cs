@@ -19,11 +19,11 @@ namespace TicTacToe.Application.UseCases.Match.CreatePlayer
 
         public async Task<CreateTicPlayerResponse> Handle(CreateTicPlayerCommand request, CancellationToken cancellationToken)
         {
-            var exists = await _ticPlayerRepository.HasAnyWithConditionAsync(p => p.NickName.Equals(request.nickName));
+            var existingPlayer = await _ticPlayerRepository.RetrieveByConditionAsync(p => p.NickName.Equals(request.nickName));
 
-            if (exists)
+            if (existingPlayer != null)
             {
-                throw new DomainException("Player with this nickname already exists.");
+                return new CreateTicPlayerResponse(existingPlayer.Id);
             }
 
             var ticPlayer = new TicPlayer(request.name, request.nickName);
@@ -31,9 +31,7 @@ namespace TicTacToe.Application.UseCases.Match.CreatePlayer
             await _ticPlayerRepository.CreateAsync(ticPlayer);
             await _unitOfWork.CommitAsync();
 
-            var response = new CreateTicPlayerResponse(ticPlayer.Id);
-
-            return response;
+            return new CreateTicPlayerResponse(ticPlayer.Id);
         }
     }
 }
