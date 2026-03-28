@@ -9,7 +9,11 @@
                 options.AddPolicy("DefaultPolicy",
                      policy =>
                      {
-                         policy.WithOrigins("http://localhost:4200")
+                         policy.WithOrigins(
+                                   "http://localhost:4200",
+                                   "http://localhost:8080",
+                                   "http://frontend",
+                                   "http://frontend:80")
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials();

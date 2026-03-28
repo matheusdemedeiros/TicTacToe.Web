@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { TicBoardCellComponent } from '../tic-board-cell/tic-board-cell.component';
 import { TicMatch } from '../shared/models/tic-match.model';
-import { TIicBoardCell } from '../shared/models/tic-board-cell..model';
+import { TIicBoardCell } from '../shared/models/tic-board-cell.model';
 import { TicBoardCellState } from '../tic-board-cell/models/tic-board-cell-state.enum';
 
 @Component({

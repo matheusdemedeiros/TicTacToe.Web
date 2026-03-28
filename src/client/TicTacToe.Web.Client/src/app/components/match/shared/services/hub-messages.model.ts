@@ -1,5 +1,5 @@
-import { TicMatchState } from "../../../home/shared/models/match-state.enum"
-import { TIicBoardCell } from "../models/tic-board-cell..model"
+﻿import { TicMatchState } from "../../../home/shared/models/match-state.enum"
+import { TIicBoardCell } from "../models/tic-board-cell.model"
 
 export interface IJoinMatchCommand {
     matchId: string
