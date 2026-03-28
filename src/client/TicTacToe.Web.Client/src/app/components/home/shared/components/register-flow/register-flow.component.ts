@@ -16,6 +16,7 @@ import { MatchService } from '../../services/match.service';
 import { IAddTicPlayerToMatchCommand, IAddTicPlayerToMatchResponse, ICreateTicMatchCommand, ICreateTicMatchResponse } from '../../models/match.model';
 import { PlayModeTypes } from '../../models/play-mode-types.enum';
 import { NotificationService } from '../../../../../core/notification.service';
+import { GameSessionService } from '../../../../../core/game-session.service';
 
 @Component({
   selector: 'app-register-flow',
@@ -39,12 +40,14 @@ export class RegisterFlowComponent implements OnDestroy {
   private router: Router;
   private successRoute: string = 'ticmatch';
   private notificationService;
+  private gameSessionService;
 
   constructor() {
     this.fb = inject(FormBuilder);
     this.playerService = inject(PlayerService);
     this.matchService = inject(MatchService);
     this.notificationService = inject(NotificationService);
+    this.gameSessionService = inject(GameSessionService);
     this.router = inject(Router);
     this.form = this.fb.group({
       fullName: ['', Validators.required],
@@ -195,6 +198,7 @@ export class RegisterFlowComponent implements OnDestroy {
   }
 
   private navigateOnSuccess(): void {
+    this.gameSessionService.save(this.ticMatchId, this.ticPlayerId);
     this.router.navigate([this.successRoute], {
       queryParams: {
         ticMatchId: this.ticMatchId,
