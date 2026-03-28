@@ -1,4 +1,4 @@
-﻿<div class="bg-black min-h-screen flex flex-col">
+<div class="bg-black min-h-screen flex flex-col">
 
   <!-- Navbar -->
   <nav class="sticky top-0 z-40 w-full bg-indigo-600 shadow-lg shadow-indigo-500/20">
@@ -11,7 +11,7 @@
             {{ currentMatch?.playerXNickName }}
           </span>
           <span class="text-indigo-300/60 text-xs">(X)</span>
-          <span class="text-indigo-300/40 mx-1">—</span>
+          <span class="text-indigo-300/40 mx-1">&mdash;</span>
           <span class="font-semibold"
             [ngClass]="currentPlayerSymbol === 'O' ? 'text-white' : 'text-indigo-300'">
             {{ currentMatch?.playerONickName }}
@@ -26,7 +26,6 @@
   <div class="flex-1 flex items-center justify-center px-4 py-6">
     <div class="w-full max-w-md text-center space-y-6">
 
-      <!-- Simbolo do jogador -->
       <div class="flex flex-col items-center gap-1">
         <p class="text-xs text-gray-500 uppercase tracking-widest">Seu simbolo</p>
         <span class="text-5xl font-black text-indigo-500">{{ myMatchSymbol }}</span>
@@ -57,6 +56,26 @@
         (cellClick)="onCellClick($event)">
       </app-tic-board>
 
+      @if (currentMatch?.shortCode) {
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+          <div class="text-left">
+            <p class="text-[10px] text-gray-600 uppercase tracking-wider">Codigo da partida</p>
+            <p class="text-lg font-bold text-white font-mono tracking-widest">{{ currentMatch?.shortCode }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button (click)="onCopyCode()"
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+              [ngClass]="codeCopied ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-zinc-800 text-gray-400 hover:text-white border border-zinc-700 hover:border-zinc-600'">
+              {{ codeCopied ? "Copiado!" : "Copiar" }}
+            </button>
+            <button (click)="onShareLink()"
+              class="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 border border-indigo-500/30 transition-all">
+              Compartilhar
+            </button>
+          </div>
+        </div>
+      }
+
       @if (!isGameOver) {
         <button
           (click)="onAbandonMatch()"
@@ -65,17 +84,13 @@
         </button>
       }
 
-      <p class="text-[10px] text-gray-700 font-mono select-all">{{ currentMatchId }}</p>
-
     </div>
   </div>
 
-  <!-- Modal Game Over -->
   @if (showGameOverModal) {
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
       <div class="bg-zinc-900 border border-indigo-500/20 rounded-2xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl shadow-indigo-500/5">
         <p class="text-xl font-bold text-white">Fim de Jogo</p>
-
         @if (currentMatch?.isAbandoned) {
           <p class="text-4xl">&#128075;</p>
           <p class="text-yellow-400">Partida abandonada.</p>
@@ -89,15 +104,12 @@
           <p class="text-4xl">&#128546;</p>
           <p class="text-red-400 font-semibold">Voce perdeu. Boa sorte na proxima!</p>
         }
-
         <div class="space-y-3 pt-2">
-          <button
-            (click)="onRematch()"
+          <button (click)="onRematch()"
             class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-6 py-3 rounded-full transition-all w-full">
             Novo jogo com mesmo oponente
           </button>
-          <button
-            (click)="onBackToHome()"
+          <button (click)="onBackToHome()"
             class="bg-zinc-800 hover:bg-zinc-700 text-gray-400 hover:text-gray-300 font-semibold px-6 py-3 rounded-full transition-all w-full">
             Voltar ao inicio
           </button>
