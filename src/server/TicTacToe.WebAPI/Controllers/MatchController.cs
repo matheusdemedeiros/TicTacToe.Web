@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TicTacToe.Application.UseCases.Match.AddPlayer;
 using TicTacToe.Application.UseCases.Match.CreateMatch;
+using TicTacToe.Application.UseCases.Match.ResolveMatchByCode;
 using TicTacToe.Application.UseCases.Match.RetriveMatchById;
 
 namespace TicTacToe.Infra.Data.Controllers
@@ -59,6 +60,21 @@ namespace TicTacToe.Infra.Data.Controllers
         {
             var command = new RetriveTicMatchByIdQuery() { MatchId = matchId };
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Resolve a match by its short code.
+        /// </summary>
+        /// <param name="code">6-character match code</param>
+        /// <returns></returns>
+        [HttpGet("code/{code}")]
+        [ProducesResponseType(typeof(ResolveMatchByCodeResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResolveMatchByCode(string code)
+        {
+            var query = new ResolveMatchByCodeQuery { ShortCode = code };
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }

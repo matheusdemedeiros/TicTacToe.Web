@@ -49,6 +49,17 @@ namespace TicTacToe.Infra_Data.Repositories
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
+        public async Task<TicMatch?> RetrieveByShortCodeAsync(string shortCode)
+        {
+            return await _matches
+                .Include(t => t.Players)
+                .Include(t => t.Board)
+                .Include(t => t.CurrentPlayer)
+                .Include(t => t.TicScore)
+                    .ThenInclude(s => s.WinningPlayer)
+                .FirstOrDefaultAsync(t => t.ShortCode == shortCode);
+        }
+
         public async Task<bool> HasAnyWithConditionAsync(Expression<Func<TicMatch, bool>> condition)
         {
             return await _matches.AnyAsync(condition);

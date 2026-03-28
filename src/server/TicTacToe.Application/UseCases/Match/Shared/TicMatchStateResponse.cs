@@ -5,6 +5,7 @@ namespace TicTacToe.Application.UseCases.Match.Shared
     public class TicMatchStateResponse
     {
         public Guid MatchId { get; set; }
+        public string ShortCode { get; set; }
         public TicBoardCell[][] Board { get; set; }
         public TicMatchState State { get; set; }
         public Guid CurrentPlayerId { get; set; }
@@ -31,6 +32,7 @@ namespace TicTacToe.Application.UseCases.Match.Shared
             return new TicMatchStateResponse
             {
                 MatchId = match.Id,
+                ShortCode = match.ShortCode,
                 Board = match.Board.Board,
                 State = match.State,
                 CurrentPlayerId = match.CurrentPlayer?.Id ?? Guid.Empty,
