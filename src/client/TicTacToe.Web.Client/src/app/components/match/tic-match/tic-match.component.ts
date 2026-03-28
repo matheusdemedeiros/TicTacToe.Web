@@ -1,5 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { filter, take, Subscription } from 'rxjs';
 
 import { TicBoardComponent } from '../tic-board/tic-board.component';
 import { TicMatchHubService } from '../shared/services/tic-match-hub.service';
@@ -16,7 +17,7 @@ import { GameSessionService } from '../../../core/game-session.service';
   templateUrl: './tic-match.component.html',
   styleUrl: './tic-match.component.scss'
 })
-export class TicMatchComponent implements OnInit {
+export class TicMatchComponent implements OnInit, OnDestroy {
   protected myPlayerId: string = '';
   protected currentMatchId: string = '';
   protected currentPlayerId: string = '';
@@ -24,6 +25,7 @@ export class TicMatchComponent implements OnInit {
   protected currentMatch: TicMatch | undefined;
   protected showGameOverModal: boolean = false;
 
+  private subscriptions: Subscription[] = [];
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private ticMatchHubService = inject(TicMatchHubService);
@@ -78,18 +80,19 @@ export class TicMatchComponent implements OnInit {
       }
     }
 
+    this.ticMatchHubService.clearHandlers();
+
     this.ticMatchHubService.connectionEstablished
-      .subscribe({
-        next: (connected: boolean) => {
-          if (connected) {
-            this.connectToMatchHub();
-            this.onPlayerJoined();
-            this.onPlayerMadeMove();
-            this.onMatchAbandoned();
-            this.onMatchRematch();
-          }
-        }
+      .pipe(filter(connected => connected), take(1))
+      .subscribe(() => {
+        this.connectToMatchHub();
+        this.registerHubHandlers();
       });
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.ticMatchHubService.clearHandlers();
   }
 
   public onCellClick(position: { row: number; col: number }): void {
@@ -123,6 +126,58 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService.joinMatch(command);
   }
 
+  private registerHubHandlers(): void {
+    this.subscriptions.push(
+      this.ticMatchHubService.onPlayerJoined().subscribe({
+        next: (response: ITicMatchStateResponse) => {
+          this.updateMatchState(response);
+          if (response.state === TicMatchState.IN_PROGRESS) {
+            this.notificationService.showSuccess('Ambos jogadores conectados. Jogo iniciado!', 'Jogo');
+          } else {
+            this.notificationService.showInfo('Aguardando oponente entrar...', 'Jogo');
+          }
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.ticMatchHubService.onPlayerMadeMove().subscribe({
+        next: (response: ITicMatchStateResponse) => {
+          this.updateMatchState(response);
+          if (response.isFinished) {
+            this.gameSessionService.clear();
+            this.showGameOverModal = true;
+          } else if (this.isMyTurn) {
+            this.notificationService.showInfo('Sua vez!', 'Jogo');
+          }
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.ticMatchHubService.onMatchAbandoned().subscribe({
+        next: (response: ITicMatchStateResponse) => {
+          this.updateMatchState(response);
+          this.gameSessionService.clear();
+          this.showGameOverModal = true;
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.ticMatchHubService.onMatchRematch().subscribe({
+        next: (response: ITicMatchStateResponse) => {
+          this.currentMatchId = response.matchId;
+          this.gameSessionService.save(this.currentMatchId, this.myPlayerId);
+          this.showGameOverModal = false;
+          this.updateMatchState(response);
+          this.connectToMatchHub();
+          this.notificationService.showSuccess('Nova partida criada! Aguardando jogadores...', 'Revanche');
+        }
+      })
+    );
+  }
+
   private updateMatchState(response: ITicMatchStateResponse): void {
     this.currentMatch = {
       id: response.matchId,
@@ -140,55 +195,5 @@ export class TicMatchComponent implements OnInit {
     };
     this.currentPlayerId = response.currentPlayerId;
     this.currentPlayerSymbol = response.currentPlayerSymbol;
-  }
-
-  private onPlayerJoined(): void {
-    this.ticMatchHubService.onPlayerJoined().subscribe({
-      next: (response: ITicMatchStateResponse) => {
-        this.updateMatchState(response);
-        if (response.state === TicMatchState.IN_PROGRESS) {
-          this.notificationService.showSuccess('Ambos jogadores conectados. Jogo iniciado!', 'Jogo');
-        } else {
-          this.notificationService.showInfo('Aguardando oponente entrar...', 'Jogo');
-        }
-      }
-    });
-  }
-
-  private onPlayerMadeMove(): void {
-    this.ticMatchHubService.onPlayerMadeMove().subscribe({
-      next: (response: ITicMatchStateResponse) => {
-        this.updateMatchState(response);
-        if (response.isFinished) {
-          this.gameSessionService.clear();
-          this.showGameOverModal = true;
-        } else if (this.isMyTurn) {
-          this.notificationService.showInfo('Sua vez!', 'Jogo');
-        }
-      }
-    });
-  }
-
-  private onMatchAbandoned(): void {
-    this.ticMatchHubService.onMatchAbandoned().subscribe({
-      next: (response: ITicMatchStateResponse) => {
-        this.updateMatchState(response);
-        this.gameSessionService.clear();
-        this.showGameOverModal = true;
-      }
-    });
-  }
-
-  private onMatchRematch(): void {
-    this.ticMatchHubService.onMatchRematch().subscribe({
-      next: (response: ITicMatchStateResponse) => {
-        this.currentMatchId = response.matchId;
-        this.gameSessionService.save(this.currentMatchId, this.myPlayerId);
-        this.showGameOverModal = false;
-        this.updateMatchState(response);
-        this.connectToMatchHub();
-        this.notificationService.showSuccess('Nova partida criada! Aguardando jogadores...', 'Revanche');
-      }
-    });
   }
 }

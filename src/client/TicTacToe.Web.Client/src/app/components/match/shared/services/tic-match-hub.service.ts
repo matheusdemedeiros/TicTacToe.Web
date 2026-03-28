@@ -1,7 +1,7 @@
-import { EventEmitter, inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { IAbandonMatchCommand, IJoinMatchCommand, IMakePlayerMoveCommand, IRematchCommand, ITicMatchStateResponse } from './hub-messages.model';
@@ -9,7 +9,7 @@ import { NotificationService } from '../../../../core/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class TicMatchHubService {
-  public connectionEstablished = new EventEmitter<Boolean>();
+  public connectionEstablished = new BehaviorSubject<boolean>(false);
 
   private readonly hubUrl = `${environment.apiUrl}Ticmatchhub`;
   private hubConnection?: HubConnection;
@@ -81,6 +81,13 @@ export class TicMatchHubService {
     });
   }
 
+  public clearHandlers(): void {
+    this.hubConnection?.off('TicPlayerJoined');
+    this.hubConnection?.off('TicPlayerMadeMove');
+    this.hubConnection?.off('TicMatchAbandoned');
+    this.hubConnection?.off('TicMatchRematch');
+  }
+
   public disconnect(): Promise<void> {
     return this.hubConnection?.stop() ?? Promise.resolve();
   }
@@ -92,6 +99,7 @@ export class TicMatchHubService {
 
     this.hubConnection.onclose(() => {
       this.connectionIsEstablished = false;
+      this.connectionEstablished.next(false);
       this.notificationService.showWarning('Conexao perdida. Reconectando...', 'Conexao');
       setTimeout(() => { this.startConnection(); }, 5000);
     });
@@ -102,7 +110,7 @@ export class TicMatchHubService {
       .start()
       .then(() => {
         this.connectionIsEstablished = true;
-        this.connectionEstablished.emit(true);
+        this.connectionEstablished.next(true);
       })
       .catch(() => {
         this.notificationService.showError('Nao foi possivel conectar ao servidor. Tentando novamente...', 'Conexao');
