@@ -1,10 +1,11 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 
 import { Observable } from 'rxjs';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { IJoinMatchCommand, IMakePlayerMoveCommand } from './hub-messages.model';
+import { NotificationService } from '../../../../core/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class TicMatchHubService {
@@ -13,6 +14,7 @@ export class TicMatchHubService {
   private readonly hubUrl = `${environment.apiUrl}Ticmatchhub`;
   private hubConnection?: HubConnection;
   private connectionIsEstablished = false;
+  private notificationService: NotificationService = inject(NotificationService);
 
   constructor() {
     this.createConnection();
@@ -20,12 +22,17 @@ export class TicMatchHubService {
   }
 
   public joinMatch(joinMatchCommand: IJoinMatchCommand): void {
-    this.hubConnection!.invoke('JoinMatchAsync', joinMatchCommand);
+    this.hubConnection!.invoke('JoinMatchAsync', joinMatchCommand)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Failed to join match.', 'SignalR');
+      });
   }
-  
+
   public makePlayerMove(makePlayerMoveCommand: IMakePlayerMoveCommand): void {
-    
-    this.hubConnection!.invoke('MakePlayerMoveAsync', makePlayerMoveCommand);
+    this.hubConnection!.invoke('MakePlayerMoveAsync', makePlayerMoveCommand)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Failed to make move.', 'SignalR');
+      });
   }
 
   public onPlayerJoined(): Observable<any> {
@@ -39,7 +46,6 @@ export class TicMatchHubService {
   public onPlayerMadeMove(): Observable<any> {
     return new Observable((observer) => {
       this.hubConnection?.on('TicPlayerMadeMove', (match) => {
-        
         observer.next(match);
       });
     });
@@ -53,6 +59,12 @@ export class TicMatchHubService {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl)
       .build();
+
+    this.hubConnection.onclose(() => {
+      this.connectionIsEstablished = false;
+      this.notificationService.showWarning('Connection lost. Attempting to reconnect...', 'Connection');
+      setTimeout(() => { this.startConnection(); }, 5000);
+    });
   }
 
   private startConnection(): void {
@@ -60,11 +72,10 @@ export class TicMatchHubService {
       .start()
       .then(() => {
         this.connectionIsEstablished = true;
-        console.log('Hub connection started');
         this.connectionEstablished.emit(true);
       })
-      .catch(err => {
-        console.log('Error while establishing connection, retrying...');
+      .catch(() => {
+        this.notificationService.showError('Unable to connect to game server. Retrying...', 'Connection');
         setTimeout(() => { this.startConnection(); }, 5000);
       });
   }

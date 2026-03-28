@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Application.UseCases.Match.RetriveMatchById
 {
@@ -19,7 +20,7 @@ namespace TicTacToe.Application.UseCases.Match.RetriveMatchById
             var matchExists = await _matchRepository.HasAnyWithConditionAsync(match => match.Id == matchId);
             if (!matchExists)
             {
-                return null;
+                throw new DomainException("Match not found.");
             }
 
             var match = await _matchRepository.RetrieveByIdAsync(matchId);

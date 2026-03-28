@@ -3,6 +3,7 @@ using TicTacToe.Application.UseCases.Match.CreateMatch;
 using TicTacToe.Domain.Entities.MatchModule;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Application.UseCases.Match.JoinMatch
 {
@@ -21,14 +22,14 @@ namespace TicTacToe.Application.UseCases.Match.JoinMatch
         {
             if (!Guid.TryParse(request.MatchId, out var matchGuid))
             {
-                throw new Exception("Invalid match ID format.");
+                throw new DomainException("Invalid match ID format.");
             }
 
             var match = await _ticMatchRepository.RetrieveByIdAsync(matchGuid);
 
             if (match == null)
             {
-                throw new Exception("Match not found.");
+                throw new DomainException("Match not found.");
             }
 
             if (match.Players.Count == 2)
