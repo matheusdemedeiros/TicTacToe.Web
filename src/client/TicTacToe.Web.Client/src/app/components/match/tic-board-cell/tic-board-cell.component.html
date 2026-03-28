@@ -1,4 +1,5 @@
-<button
+﻿<button
+    [disabled]="disabled"
     class="
     w-full 
     aspect-square 
@@ -8,12 +9,13 @@
     rounded-xl 
     border-gray-300 
     bg-zinc-800 
-    hover:bg-zinc-700
-    hover:text-indigo-500
     text-5xl
-    text-gray-500
     font-bold 
     transition"
+    [ngClass]="{
+      'hover:bg-zinc-700 hover:text-indigo-500 text-gray-500 cursor-pointer': !disabled,
+      'opacity-60 cursor-not-allowed text-gray-600': disabled
+    }"
     (click)="onClick()"
     >
     {{ symbol }}

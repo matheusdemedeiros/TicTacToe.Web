@@ -14,10 +14,11 @@ import { TicBoardCellState } from '../tic-board-cell/models/tic-board-cell-state
 })
 export class TicBoardComponent {
   @Input() currentMatch: TicMatch | undefined;
-  @Input() public board: TIicBoardCell[][] | undefined;
+  @Input() disabled: boolean = false;
   @Output() cellClick = new EventEmitter<{ row: number; col: number }>();
 
   public handleCellClick(row: number, col: number): void {
+    if (this.disabled) return;
     this.cellClick.emit({ row, col });
   }
 
