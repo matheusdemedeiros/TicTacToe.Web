@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using TicTacToe.Application.UseCases.Match.JoinMatch;
 using TicTacToe.Application.UseCases.Match.MakeMove;
+using TicTacToe.Application.UseCases.Match.Shared;
 using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.WebAPI.Hubs
@@ -26,7 +27,7 @@ namespace TicTacToe.WebAPI.Hubs
             }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(Guid.Parse(command.MatchId)));
-            await NotifyAllPlayersFromMatchAsync<JoinMatchResponse>(result, Guid.Parse(command.MatchId), "TicPlayerJoined");
+            await NotifyAllPlayersFromMatchAsync<TicMatchStateResponse>(result, Guid.Parse(command.MatchId), "TicPlayerJoined");
         }
 
         public async Task MakePlayerMoveAsync(MakePlayerMoveCommand command)
@@ -36,7 +37,7 @@ namespace TicTacToe.WebAPI.Hubs
             {
                 throw new DomainException("Invalid move or match not found.");
             }
-            await NotifyAllPlayersFromMatchAsync<MakePlayerMoveResponse>(result, Guid.Parse(command.MatchId), "TicPlayerMadeMove");
+            await NotifyAllPlayersFromMatchAsync<TicMatchStateResponse>(result, Guid.Parse(command.MatchId), "TicPlayerMadeMove");
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
