@@ -30,15 +30,16 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService = inject(TicMatchHubService)
   }
 
-  public get myMatchSymbol(): string {
-    switch (this.myPlayerId) {
-      case this.currentMatch?.ticPlayerWithOSymbolId:
-        return "O";
-      case this.currentMatch?.ticPlayerWithXSymbolId:
-        return "X";
-      default:
-        return '';
-    }
+public get myMatchSymbol(): string {
+  if (!this.currentMatch) return '';
+
+  const symbolMap = {
+    [this.currentMatch.ticPlayerWithOSymbolId]: 'O',
+    [this.currentMatch.ticPlayerWithXSymbolId]: 'X'
+  };
+
+  return symbolMap[this.myPlayerId] ?? '';
+}
 
   }
 

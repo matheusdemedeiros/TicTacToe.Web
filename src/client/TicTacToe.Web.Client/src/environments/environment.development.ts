@@ -1,4 +1,4 @@
 export const environment = {
     envName: 'development',
-    apiUrl: "https://localhost:44326/"
+    apiUrl: "https://host.docker.internal:7199/"
 };
