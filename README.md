@@ -1,4 +1,4 @@
-﻿# TicTacToe.Web
+# TicTacToe.Web
 
 Multiplayer real-time **Tic-Tac-Toe** web application built with Angular and ASP.NET Core, communicating via REST API and SignalR WebSockets.
 
@@ -78,13 +78,14 @@ docker compose down
 ## Game Flow
 
 ```
-1. Create players .............. POST /api/Player
-2. Create a match .............. POST /api/Match
-3. Add players to match ........ POST /api/Match/{id}/add-player
-4. Connect to SignalR hub ...... /Ticmatchhub
-5. Join the match group ........ Hub: JoinMatchAsync
-6. Make moves in real-time ..... Hub: MakePlayerMoveAsync
-7. Receive updates ............. Hub: TicPlayerJoined, TicPlayerMadeMove
+1. Enter nickname .............. Login screen (session stored in localStorage)
+2. Create a match .............. Lobby -> POST /api/Match -> get ShortCode (e.g. X7K2M9)
+3. Share code or link .......... Copy code / Share link (/join?code=X7K2M9)
+4. Opponent joins .............. Lobby (enter code) or direct link -> addPlayer
+5. Connect to SignalR hub ...... /Ticmatchhub
+6. Join match group ............ Hub: JoinMatchAsync (auto-starts when 2 players)
+7. Make moves in real-time ..... Hub: MakePlayerMoveAsync
+8. Receive updates ............. Hub: TicPlayerJoined, TicPlayerMadeMove
 ```
 
 ## Documentation
