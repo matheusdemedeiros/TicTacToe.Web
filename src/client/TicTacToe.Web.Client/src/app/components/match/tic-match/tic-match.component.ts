@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { TicBoardComponent } from '../tic-board/tic-board.component';
@@ -73,7 +73,7 @@ export class TicMatchComponent implements OnInit {
         this.myPlayerId = session.playerId;
       } else {
         this.notificationService.showError('Nenhuma sessao ativa encontrada.', 'Erro');
-        this.router.navigate(['/']);
+        this.router.navigate(['/lobby']);
         return;
       }
     }
@@ -115,7 +115,7 @@ export class TicMatchComponent implements OnInit {
 
   public onBackToHome(): void {
     this.gameSessionService.clear();
-    this.router.navigate(['/']);
+    this.router.navigate(['/lobby']);
   }
 
   private connectToMatchHub(): void {
