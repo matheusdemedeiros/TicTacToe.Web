@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+﻿import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { TicBoardComponent } from '../tic-board/tic-board.component';
@@ -30,17 +30,18 @@ export class TicMatchComponent implements OnInit {
     this.ticMatchHubService = inject(TicMatchHubService)
   }
 
-public get myMatchSymbol(): string {
-  if (!this.currentMatch) return '';
+  public get myMatchSymbol(): string {
+    if (!this.currentMatch) return '';
 
-  const symbolMap = {
-    [this.currentMatch.ticPlayerWithOSymbolId]: 'O',
-    [this.currentMatch.ticPlayerWithXSymbolId]: 'X'
-  };
+    const symbolMap: Record<string, string> = {};
+    if (this.currentMatch.ticPlayerWithOSymbolId) {
+      symbolMap[this.currentMatch.ticPlayerWithOSymbolId] = 'O';
+    }
+    if (this.currentMatch.ticPlayerWithXSymbolId) {
+      symbolMap[this.currentMatch.ticPlayerWithXSymbolId] = 'X';
+    }
 
-  return symbolMap[this.myPlayerId] ?? '';
-}
-
+    return symbolMap[this.myPlayerId] ?? '';
   }
 
   public ngOnInit(): void {
@@ -60,7 +61,6 @@ public get myMatchSymbol(): string {
   }
 
   public onCellClick(position: { row: number; col: number }): void {
-    console.log('Jogada na célula:', position);
     const command: IMakePlayerMoveCommand = {
       cellRow: position.row,
       cellCol: position.col,
@@ -71,19 +71,16 @@ public get myMatchSymbol(): string {
     this.ticMatchHubService.makePlayerMove(command);
   }
 
-
   private connectToMatchHub(): void {
     const command: IJoinMatchCommand = {
       matchId: this.currentMatchId
     }
     this.ticMatchHubService.joinMatch(command);
-    console.log('Conectado e joinMatch chamado');
   }
 
   private onPlayerJoined(): void {
     this.ticMatchHubService.onPlayerJoined().subscribe({
       next: (match: IJoinMatchResponse) => {
-        console.log('response do tic event', match)
         this.currentMatch = {
           id: match.matchId,
           state: match.state,
@@ -98,11 +95,8 @@ public get myMatchSymbol(): string {
   }
 
   private onPlayerMadeMove(): void {
-
     this.ticMatchHubService.onPlayerMadeMove().subscribe({
       next: (match: IMakePlayerMoveResponse) => {
-
-        console.log('response do tic event', match)
         this.currentMatch = {
           id: match.matchId,
           state: match.state,
