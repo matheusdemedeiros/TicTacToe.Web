@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # VS Code
 .vscode/
+# VS workspace artifact
+src/server/src/
