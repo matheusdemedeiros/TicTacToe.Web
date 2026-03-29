@@ -1,6 +1,6 @@
-﻿import { Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { PlayerService } from '../home/shared/services/player.service';
 import { PlayerSessionService } from '../../core/player-session.service';
@@ -16,14 +16,19 @@ import { NotificationService } from '../../core/notification.service';
 export class LoginComponent {
   protected nickName: string = '';
 
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
   private playerService = inject(PlayerService);
   private playerSession = inject(PlayerSessionService);
   private notificationService = inject(NotificationService);
 
+  private get returnUrl(): string {
+    return this.route.snapshot.queryParamMap.get('returnUrl') ?? '/lobby';
+  }
+
   public ngOnInit(): void {
     if (this.playerSession.isLoggedIn()) {
-      this.router.navigate(['/lobby']);
+      this.navigateAfterLogin();
     }
   }
 
@@ -38,8 +43,15 @@ export class LoginComponent {
         next: (response) => {
           this.playerSession.save(response.id, this.nickName.trim());
           this.notificationService.showSuccess('Bem-vindo, ' + this.nickName.trim() + '!', 'Login');
-          this.router.navigate(['/lobby']);
+          this.navigateAfterLogin();
         }
       });
+  }
+
+  private navigateAfterLogin(): void {
+    const url = new URL(this.returnUrl, window.location.origin);
+    const queryParams: Record<string, string> = {};
+    url.searchParams.forEach((value, key) => queryParams[key] = value);
+    this.router.navigate([url.pathname], { queryParams });
   }
 }
