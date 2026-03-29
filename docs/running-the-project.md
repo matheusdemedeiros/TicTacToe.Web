@@ -1,4 +1,4 @@
-﻿# Running the Project
+# Running the Project
 
 This guide covers all the ways to run the TicTacToe.Web application.
 
@@ -176,8 +176,8 @@ export const environment = {
 
 | File | Environment | API URL |
 | --- | --- | --- |
-| `environment.ts` | Production | `https://host.docker.internal:7199/` |
-| `environment.development.ts` | Local dev (ng serve) | `https://host.docker.internal:7199/` |
+| `environment.ts` | Production (Azure) | Backend Azure URL |
+| `environment.development.ts` | Local dev (ng serve) | `https://localhost:7199/` |
 | `environment.docker.ts` | Docker Compose | `/` (proxied by Nginx) |
 
 ### Docker Compose Services
@@ -233,6 +233,12 @@ Check the browser console for errors. Common causes:
 - Backend is not running (API calls fail)
 - CORS misconfiguration — verify `CORSConfig.cs` includes the frontend origin
 - SignalR connection failed — check that the `/Ticmatchhub` route is accessible
+
+### CORS errors
+
+CORS origins are configured per environment in `appsettings.*.json` under `Cors:AllowedOrigins`. If you see CORS errors:
+- Check that the frontend URL is listed in the correct `appsettings` file
+- In Azure, you can override via Application Settings: `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1`, etc.
 
 ### `npm ci` fails with peer dependency errors
 

@@ -196,3 +196,80 @@ All exceptions are caught by `GlobalExceptionHandlerMiddleware` and returned as 
 - Models defined as TypeScript interfaces
 - Hub service wraps SignalR in RxJS Observables
 - Feature-based folder structure under components/
+
+## Environments and Deployment
+
+The project has 3 execution environments with distinct configurations, build processes, and deploy targets.
+
+### Environment: Development (local Visual Studio)
+
+- **ASPNETCORE_ENVIRONMENT**: `Development`
+- **Backend**: `dotnet run` or F5 in Visual Studio (`https://localhost:7199`)
+- **Frontend**: `ng serve` (`http://localhost:4200`)
+- **Database**: SQL Server in Docker (`localhost:1433`) or local instance
+- **Config files**: `appsettings.json` + `appsettings.Development.json`
+- **Frontend env**: `environment.development.ts` (apiUrl: `https://host.docker.internal:7199/`)
+- **Migrations**: `cd src/server && dotnet ef database update --project "TicTacToe.Infra,Data" --startup-project "TicTacToe.WebAPI"`
+- **CORS origins**: read from `appsettings.json` → `Cors:AllowedOrigins` → `["http://localhost:4200"]`
+
+### Environment: Docker (local containers)
+
+- **ASPNETCORE_ENVIRONMENT**: `Docker`
+- **Orchestration**: `cd docker && docker compose up -d`
+- **Build**: `docker compose build` (multi-stage Dockerfiles)
+- **Backend**: container `tictactoe-backend` on port 5200 (internal 8080)
+- **Frontend**: container `tictactoe-frontend` on port 4200 (Nginx on internal 80)
+- **Database**: container `sql-server` on port 1433
+- **Config files**: `appsettings.json` + `appsettings.Docker.json`
+- **Frontend env**: `environment.docker.ts` (apiUrl: `/` — proxied by Nginx)
+- **Migrations**: `cd src/server && dotnet ef database update --project "TicTacToe.Infra,Data" --startup-project "TicTacToe.WebAPI"` with connection string pointing to `localhost:1433`
+- **CORS origins**: read from `appsettings.Docker.json` → `Cors:AllowedOrigins`
+
+### Environment: Production (Azure)
+
+- **ASPNETCORE_ENVIRONMENT**: `Production`
+- **Backend host**: Azure App Service (Free F1) — `https://api-tictactoe-bvhncffjapd9f9az.canadacentral-01.azurewebsites.net`
+- **Frontend host**: Azure Static Web Apps — `https://blue-rock-0559b9d0f.2.azurestaticapps.net`
+- **Database**: Azure SQL Database
+- **Config files**: `appsettings.json` + `appsettings.production.json` + Azure Configuration (connection strings override via env vars)
+- **Frontend env**: `environment.ts` (apiUrl: backend Azure URL)
+- **CORS origins**: read from `appsettings.production.json` → `Cors:AllowedOrigins` (can also be overridden via Azure env vars `Cors__AllowedOrigins__0`, etc.)
+
+#### Production Build and Deploy Commands
+
+**Backend:**
+```
+cd src/server
+dotnet publish TicTacToe.WebAPI -c Release -o ../../publish/api
+Compress-Archive -Path publish/api/* -DestinationPath publish/api.zip -Force
+```
+Deploy via Kudu: App Service → Advanced Tools → Zip Push Deploy
+
+**Frontend:**
+```
+docker build --target export --output publish/frontend -f publish/Dockerfile.prod-frontend src/client/TicTacToe.Web.Client/
+```
+Deploy via SWA CLI (run inside node:22 Docker container due to local Node version incompatibility):
+```
+docker run --rm -v "publish/frontend:/app" node:22 bash -c "npm install -g @azure/static-web-apps-cli 2>/dev/null && swa deploy /app --deployment-token 'TOKEN' --env production"
+```
+
+**Database migrations (generate SQL script):**
+```
+cd src/server
+dotnet ef migrations script --idempotent --project "TicTacToe.Infra,Data" --startup-project "TicTacToe.WebAPI" --output "../../docs/database-schema.sql"
+```
+
+### CORS Configuration
+
+CORS origins are NOT hardcoded. They are read from `appsettings` via `configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()`.
+Each environment file (`appsettings.json`, `appsettings.Docker.json`, `appsettings.production.json`) has its own list.
+In Azure, origins can be overridden via Application Settings: `Cors__AllowedOrigins__0`, `Cors__AllowedOrigins__1`, etc.
+
+### Login returnUrl Flow
+
+When a user opens an invite link (`/join?code=X`) without being logged in:
+1. `JoinComponent` redirects to `/?returnUrl=/join?code=X`
+2. `LoginComponent` reads `returnUrl` from query params
+3. After successful login, navigates to `returnUrl` instead of `/lobby`
+This ensures Player B goes directly to the match after entering their nickname.
