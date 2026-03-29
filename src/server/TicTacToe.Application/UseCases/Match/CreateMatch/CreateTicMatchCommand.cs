@@ -7,5 +7,6 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
     {
         public PlayModeType PlayMode { get; set; }
         public string InitialPlayerId { get; set; }
+        public ComputerDifficulty? ComputerDifficulty { get; set; }
     }
 }

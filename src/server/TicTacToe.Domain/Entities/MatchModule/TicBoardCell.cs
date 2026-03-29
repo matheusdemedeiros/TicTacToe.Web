@@ -20,6 +20,12 @@
             Symbol = simble;
             State = TicBoardCellState.MARKED;
         }
+
+        public void Reset()
+        {
+            Symbol = null;
+            State = TicBoardCellState.BLANK;
+        }
     }
 
     public enum TicBoardCellState

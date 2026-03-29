@@ -8,6 +8,9 @@ namespace TicTacToe.Domain.Entities.MatchModule
     {
         public string? WinningSimbol { get; private set; }
 
+        [NotMapped]
+        public List<(int Row, int Col)>? WinningCells { get; private set; }
+
         private TicBoardCell[][] _board;
         private const int MAX_WIDTH = 3;
         private const int MAX_HEIGHT = 3;
@@ -83,9 +86,8 @@ namespace TicTacToe.Domain.Entities.MatchModule
 
         public bool HasWinningSequence()
         {
-            return CheckRowForWin() != null ||
-                   CheckColumnForWin() != null ||
-                   CheckDiagonalsForWin() != null;
+            var cells = CheckRowForWin() ?? CheckColumnForWin() ?? CheckDiagonalsForWin();
+            return cells != null;
         }
 
         public bool HasTie()
@@ -118,6 +120,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
                     Board[row][1].Symbol == Board[row][2].Symbol)
                 {
                     WinningSimbol = _board[row][0].Symbol;
+                    WinningCells = [(row, 0), (row, 1), (row, 2)];
                     return new List<TicBoardCell>
                             {
                                 Board[row][0],
@@ -139,6 +142,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
                     Board[1][column].Symbol == Board[2][column].Symbol)
                 {
                     WinningSimbol = _board[0][column].Symbol;
+                    WinningCells = [(0, column), (1, column), (2, column)];
                     return new List<TicBoardCell>
                         {
                             _board[0][column],
@@ -158,6 +162,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
                 Board[1][1].Symbol == Board[2][2].Symbol)
             {
                 WinningSimbol = Board[0][0].Symbol;
+                WinningCells = [(0, 0), (1, 1), (2, 2)];
                 return new List<TicBoardCell>
                         {
                             Board[0][0],
@@ -171,6 +176,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
                 Board[1][1].Symbol == Board[2][0].Symbol)
             {
                 WinningSimbol = Board[0][2].Symbol;
+                WinningCells = [(0, 2), (1, 1), (2, 0)];
                 return new List<TicBoardCell>
                         {
                             Board[0][2],

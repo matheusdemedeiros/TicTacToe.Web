@@ -19,6 +19,11 @@ namespace TicTacToe.Application.UseCases.Match.Shared
         public bool IsAbandoned { get; set; }
         public string? WinnerSymbol { get; set; }
         public Guid? WinnerPlayerId { get; set; }
+        public PlayModeType PlayMode { get; set; }
+        public ComputerDifficulty? ComputerDifficulty { get; set; }
+        public int[][]? WinningCells { get; set; }
+        public int? ComputerMoveRow { get; set; }
+        public int? ComputerMoveCol { get; set; }
 
         public static TicMatchStateResponse FromMatch(TicMatch match)
         {
@@ -45,7 +50,12 @@ namespace TicTacToe.Application.UseCases.Match.Shared
                 IsTie = isTie,
                 IsAbandoned = isAbandoned,
                 WinnerSymbol = hasWinner ? match.TicScore!.WinningSymbol : null,
-                WinnerPlayerId = hasWinner ? match.TicScore!.WinningPlayer!.Id : null
+                WinnerPlayerId = hasWinner ? match.TicScore!.WinningPlayer!.Id : null,
+                PlayMode = match.PlayMode,
+                ComputerDifficulty = match.ComputerDifficulty,
+                WinningCells = match.Board.WinningCells?
+                    .Select(c => new[] { c.Row, c.Col })
+                    .ToArray()
             };
         }
     }

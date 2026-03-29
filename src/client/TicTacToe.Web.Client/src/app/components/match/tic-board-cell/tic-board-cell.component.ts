@@ -16,6 +16,7 @@ export class TicBoardCellComponent {
   @Input() public row: number = 0;
   @Input() public col: number = 0;
   @Input() public disabled: boolean = false;
+  @Input() public isWinningCell: boolean = false;
   @Output() cellClicked = new EventEmitter<{ row: number; col: number }>();
 
   public onClick(): void {

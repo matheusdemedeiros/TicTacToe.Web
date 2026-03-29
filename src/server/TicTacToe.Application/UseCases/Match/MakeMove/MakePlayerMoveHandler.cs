@@ -10,11 +10,16 @@ namespace TicTacToe.Application.UseCases.Match.MakeMove
     {
         private readonly ITicMatchRepository _ticMatchRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IComputerMoveCalculator _computerMoveCalculator;
 
-        public MakePlayerMoveHandler(ITicMatchRepository ticMatchRepository, IUnitOfWork unitOfWork)
+        public MakePlayerMoveHandler(
+            ITicMatchRepository ticMatchRepository,
+            IUnitOfWork unitOfWork,
+            IComputerMoveCalculator computerMoveCalculator)
         {
             _ticMatchRepository = ticMatchRepository;
             _unitOfWork = unitOfWork;
+            _computerMoveCalculator = computerMoveCalculator;
         }
 
         public async Task<TicMatchStateResponse> Handle(MakePlayerMoveCommand request, CancellationToken cancellationToken)
@@ -35,10 +40,29 @@ namespace TicTacToe.Application.UseCases.Match.MakeMove
 
             match.MakePlay(match.CurrentPlayer.Symbol, request.CellRow, request.CellCol);
 
+            int? computerMoveRow = null;
+            int? computerMoveCol = null;
+
+            if (match.IsComputerTurn && match.ComputerDifficulty.HasValue)
+            {
+                var computerPlayer = match.GetComputerPlayer()!;
+                var (row, col) = _computerMoveCalculator.Calculate(
+                    match.Board,
+                    computerPlayer.Symbol,
+                    match.ComputerDifficulty.Value);
+
+                match.MakeComputerPlay(row, col);
+                computerMoveRow = row;
+                computerMoveCol = col;
+            }
+
             await _ticMatchRepository.UpdateAsync(match);
             await _unitOfWork.CommitAsync();
 
-            return TicMatchStateResponse.FromMatch(match);
+            var response = TicMatchStateResponse.FromMatch(match);
+            response.ComputerMoveRow = computerMoveRow;
+            response.ComputerMoveCol = computerMoveCol;
+            return response;
         }
     }
 }

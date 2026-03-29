@@ -1,9 +1,11 @@
 import { TicMatchState } from "./match-state.enum";
 import { PlayModeTypes } from "./play-mode-types.enum"
+import { ComputerDifficulty } from "./computer-difficulty.enum"
 
 export interface ICreateTicMatchCommand {
     playMode: PlayModeTypes,
-    initialPlayerId: string
+    initialPlayerId: string,
+    computerDifficulty?: ComputerDifficulty
 }
 
 export interface ICreateTicMatchResponse {
