@@ -1,15 +1,17 @@
-﻿namespace TicTacToe.WebAPI.Extensions
+namespace TicTacToe.WebAPI.Extensions
 {
     public static class CORSConfig
     {
         public static IServiceCollection AddCORSConfig(this IServiceCollection services, IConfiguration configuration)
         {
+            var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
             services.AddCors(options =>
             {
                 options.AddPolicy("DefaultPolicy",
                      policy =>
                      {
-                         policy.WithOrigins("http://localhost:4200")
+                         policy.WithOrigins(allowedOrigins)
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials();

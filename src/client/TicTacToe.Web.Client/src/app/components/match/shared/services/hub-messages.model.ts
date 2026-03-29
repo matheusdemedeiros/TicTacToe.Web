@@ -1,18 +1,8 @@
-import { TicMatchState } from "../../../home/shared/models/match-state.enum"
-import { TIicBoardCell } from "../models/tic-board-cell..model"
+import { TicMatchState } from '../../../home/shared/models/match-state.enum'
+import { TIicBoardCell } from '../models/tic-board-cell.model'
 
 export interface IJoinMatchCommand {
     matchId: string
-}
-
-export interface IJoinMatchResponse {
-    matchId: string,
-    board: TIicBoardCell[][],
-    state: TicMatchState,
-    currentPlayerId: string,
-    currentPlayerSymbol: string,
-    ticPlayerWithXSymbolId: string;
-    TicPlayerWithOSymbolId: string;
 }
 
 export interface IMakePlayerMoveCommand {
@@ -22,10 +12,28 @@ export interface IMakePlayerMoveCommand {
     cellCol: number,
 }
 
-export interface IMakePlayerMoveResponse {
+export interface IAbandonMatchCommand {
+    matchId: string
+}
+
+export interface IRematchCommand {
+    previousMatchId: string
+}
+
+export interface ITicMatchStateResponse {
     matchId: string,
+    shortCode: string,
     board: TIicBoardCell[][],
     state: TicMatchState,
     currentPlayerId: string,
-    currentPlayerSymbol: string
+    currentPlayerSymbol: string,
+    ticPlayerWithXSymbolId: string,
+    ticPlayerWithOSymbolId: string,
+    playerXNickName: string | null,
+    playerONickName: string | null,
+    isFinished: boolean,
+    isTie: boolean,
+    isAbandoned: boolean,
+    winnerSymbol: string | null,
+    winnerPlayerId: string | null
 }

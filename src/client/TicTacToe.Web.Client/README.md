@@ -1,59 +1,65 @@
-# TicTacToeWebClient
+﻿# TicTacToe.Web.Client
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
+Angular 19 frontend for the TicTacToe multiplayer game.
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+- Node.js 22.x LTS
+- Angular CLI 19.x (`npm install -g @angular/cli`)
+
+## Setup
+
+```bash
+npm install --legacy-peer-deps
+```
+
+## Development Server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Open http://localhost:4200. The app reloads automatically on file changes.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Build
 
 ```bash
-ng generate component component-name
+# Development
+ng build --configuration=development
+
+# Docker (used by Dockerfile)
+ng build --configuration=docker
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## Tests
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Environment Files
 
-For end-to-end (e2e) testing, run:
+| File | Used When | API URL |
+| --- | --- | --- |
+| `environment.development.ts` | `ng serve` | `https://host.docker.internal:7199/` |
+| `environment.docker.ts` | Docker Compose | `/` (proxied by Nginx) |
+| `environment.ts` | Production build | Configure as needed |
 
-```bash
-ng e2e
+## Project Structure
+
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+src/app/
+  components/
+    home/                   # Lobby: player creation, match creation/join
+      shared/
+        models/             # TypeScript interfaces and enums
+        services/           # MatchService, PlayerService (HTTP)
+    match/                  # Gameplay components
+      shared/
+        models/             # TicMatch, TicBoardCell interfaces
+        services/           # TicMatchHubService (SignalR), hub message models
+      tic-match/            # Match orchestrator component
+      tic-board/            # 3x3 board component
+      tic-board-cell/       # Individual cell component
+  core/                     # Cross-cutting services (notifications)
+```

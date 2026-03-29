@@ -1,27 +1,121 @@
-<div class="bg-black min-h-screen flex items-center justify-center px-4">
-  <div class="bg-black backdrop-blur-md p-8 rounded-3xl w-full max-w-md text-center space-y-8">
+<div class="bg-black min-h-screen flex flex-col">
 
-    <div class="space-y-1">
-      <h2 class="text-2xl font-extrabold text-white">Tic Tac Toe</h2>
-      <p class="text-sm text-indigo-500">ID da Partida: <span class="text-gray-500 font-medium">{{ currentMatchId
-          }}</span></p>
-      <p class="text-sm text-indigo-500">Seu ID: <span class="text-gray-500 font-medium">{{ myPlayerId }}</span>
-      </p>
-      <p class="text-sm text-indigo-500">Seu símbolo: <span class="text-gray-500 font-medium">{{ myMatchSymbol }}</span>
-      </p>
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-40 w-full bg-indigo-600 shadow-lg shadow-indigo-500/20">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <span class="text-base font-extrabold tracking-tight text-white">Jogo da Velha</span>
+      @if (currentMatch?.playerXNickName) {
+        <div class="flex items-center gap-1 text-sm">
+          <span class="font-semibold"
+            [ngClass]="currentPlayerSymbol === 'X' ? 'text-white' : 'text-indigo-300'">
+            {{ currentMatch?.playerXNickName }}
+          </span>
+          <span class="text-indigo-300/60 text-xs">(X)</span>
+          <span class="text-indigo-300/40 mx-1">&mdash;</span>
+          <span class="font-semibold"
+            [ngClass]="currentPlayerSymbol === 'O' ? 'text-white' : 'text-indigo-300'">
+            {{ currentMatch?.playerONickName }}
+          </span>
+          <span class="text-indigo-300/60 text-xs">(O)</span>
+        </div>
+      }
     </div>
+  </nav>
 
-    <div class="flex items-center gap-2 justify-center">
-      <p class="text-sm text-gray-500">Vez do jogador:</p>
-      <p class="text-4xl font-bold text-indigo-500 tracking-wider">{{ currentPlayerSymbol }}</p>
+  <!-- Conteudo -->
+  <div class="flex-1 flex items-center justify-center px-4 py-6">
+    <div class="w-full max-w-md text-center space-y-6">
+
+      <div class="flex flex-col items-center gap-1">
+        <p class="text-xs text-gray-500 uppercase tracking-widest">Seu simbolo</p>
+        <span class="text-5xl font-black text-indigo-500">{{ myMatchSymbol }}</span>
+      </div>
+
+      @if (!isGameOver) {
+        <div class="flex items-center justify-center">
+          @if (currentMatch?.state === 1) {
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+              [ngClass]="isMyTurn ? 'bg-green-500/10 border border-green-500/30' : 'bg-zinc-800/60 border border-zinc-700/50'">
+              <span class="w-1.5 h-1.5 rounded-full" [ngClass]="isMyTurn ? 'bg-green-400 animate-pulse' : 'bg-zinc-600'"></span>
+              <p class="text-sm font-medium" [ngClass]="isMyTurn ? 'text-green-400' : 'text-gray-500'">
+                {{ isMyTurn ? "Sua vez!" : "Vez do oponente" }}
+              </p>
+            </div>
+          } @else {
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
+              <p class="text-sm text-yellow-400">Aguardando oponente entrar...</p>
+            </div>
+          }
+        </div>
+      }
+
+      <app-tic-board
+        [currentMatch]="currentMatch"
+        [disabled]="isBoardLocked"
+        (cellClick)="onCellClick($event)">
+      </app-tic-board>
+
+      @if (currentMatch?.shortCode) {
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+          <div class="text-left">
+            <p class="text-[10px] text-gray-600 uppercase tracking-wider">Codigo da partida</p>
+            <p class="text-lg font-bold text-white font-mono tracking-widest">{{ currentMatch?.shortCode }}</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button (click)="onCopyCode()"
+              class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+              [ngClass]="codeCopied ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-zinc-800 text-gray-400 hover:text-white border border-zinc-700 hover:border-zinc-600'">
+              {{ codeCopied ? "Copiado!" : "Copiar" }}
+            </button>
+            <button (click)="onShareLink()"
+              class="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 border border-indigo-500/30 transition-all">
+              Compartilhar
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (!isGameOver) {
+        <button
+          (click)="onAbandonMatch()"
+          class="border border-zinc-700 hover:border-red-500/50 hover:bg-red-500/10 text-gray-500 hover:text-red-400 font-semibold px-6 py-3 rounded-full transition-all w-full text-sm">
+          Abandonar Partida
+        </button>
+      }
+
     </div>
-
-    <app-tic-board [currentMatch]="currentMatch" (cellClick)="onCellClick($event)"></app-tic-board>
-
-    <button
-      class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-6 py-3 rounded-full transition-all shadow-md w-full">
-      Abandonar Partida
-    </button>
-
   </div>
+
+  @if (showGameOverModal) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+      <div class="bg-zinc-900 border border-indigo-500/20 rounded-2xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl shadow-indigo-500/5">
+        <p class="text-xl font-bold text-white">Fim de Jogo</p>
+        @if (currentMatch?.isAbandoned) {
+          <p class="text-4xl">&#128075;</p>
+          <p class="text-yellow-400">Partida abandonada.</p>
+        } @else if (currentMatch?.isTie) {
+          <p class="text-4xl">&#129309;</p>
+          <p class="text-gray-400">Empate! Ninguem venceu desta vez.</p>
+        } @else if (currentMatch?.winnerPlayerId === myPlayerId) {
+          <p class="text-4xl">&#127942;</p>
+          <p class="text-green-400 font-semibold">Voce venceu! Parabens!</p>
+        } @else {
+          <p class="text-4xl">&#128546;</p>
+          <p class="text-red-400 font-semibold">Voce perdeu. Boa sorte na proxima!</p>
+        }
+        <div class="space-y-3 pt-2">
+          <button (click)="onRematch()"
+            class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-6 py-3 rounded-full transition-all w-full">
+            Novo jogo com mesmo oponente
+          </button>
+          <button (click)="onBackToHome()"
+            class="bg-zinc-800 hover:bg-zinc-700 text-gray-400 hover:text-gray-300 font-semibold px-6 py-3 rounded-full transition-all w-full">
+            Voltar ao inicio
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>

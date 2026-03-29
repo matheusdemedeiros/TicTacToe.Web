@@ -1,34 +1,68 @@
-services:
+﻿services:
+
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-server
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd123
+    networks:
+      - tictactoe-network
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "P@ssw0rd123" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build:
+      context: ../src/server
+      dockerfile: Dockerfile
+    container_name: tictactoe-backend
+    ports:
+      - "5200:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    networks:
+      - tictactoe-network
+
+  frontend:
+    build:
+      context: ../src/client/TicTacToe.Web.Client
+      dockerfile: Dockerfile
+    container_name: tictactoe-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - tictactoe-network
+
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer-ce:latest
     container_name: portainer
-    restart: "on-failure:5"
+    restart: unless-stopped
     ports:
       - "4242:9000"
     volumes:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - tictactoe-network
 
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server
-    user: root
-    container_name: sqlserver
-    restart: "on-failure:5"
-    deploy:
-      resources:
-        limits:
-          memory: 2g # Limite de memória que será consumida pelo container
-        reservations:
-          memory: 1g # Recurso mínimo que a máquina precisa ter disponivel para rodar o container
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=P@ssw0rd123
-    ports:
-      - "1433:1433"
-    volumes:
-      - mssql_data:/var/opt/mssql/data
+networks:
+  tictactoe-network:
+    driver: bridge
 
 volumes:
+  sql_data:
   portainer_data:
-  mssql_data:
-  rabbitmq_data:

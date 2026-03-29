@@ -78,6 +78,11 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.Property<int>("PlayMode")
                         .HasColumnType("int");
 
+                    b.Property<string>("ShortCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
                     b.Property<int>("State")
                         .HasColumnType("int");
 
@@ -90,6 +95,9 @@ namespace TicTacToe.Infra.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentPlayerId");
+
+                    b.HasIndex("ShortCode")
+                        .IsUnique();
 
                     b.HasIndex("TicBoardId")
                         .IsUnique();

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Application.UseCases.Match.AddPlayer
 {
@@ -25,7 +26,7 @@ namespace TicTacToe.Application.UseCases.Match.AddPlayer
         {
             if (string.IsNullOrEmpty(request.PlayerId) || string.IsNullOrEmpty(request.MatchId))
             {
-                return null;
+                throw new DomainException("Player ID and Match ID are required.");
             }
 
             var matchId = Guid.Parse(request.MatchId);
@@ -34,13 +35,13 @@ namespace TicTacToe.Application.UseCases.Match.AddPlayer
             var playerExists = await _playerRepository.HasAnyWithConditionAsync(player => player.Id == playerId);
             if (!playerExists)
             {
-                return null;
+                throw new DomainException("Player not found.");
             }
 
             var matchExists = await _matchRepository.HasAnyWithConditionAsync(match => match.Id == matchId);
             if (!matchExists)
             {
-                return null;
+                throw new DomainException("Match not found.");
             }
 
             var match = await _matchRepository.RetrieveByIdAsync(matchId);

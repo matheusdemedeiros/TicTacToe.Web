@@ -1,0 +1,27 @@
+﻿<div class="bg-black min-h-screen flex items-center justify-center px-4">
+  <div class="w-full max-w-sm text-center space-y-8">
+
+    <div class="space-y-2">
+      <h1 class="text-4xl font-extrabold text-indigo-500">Jogo da Velha</h1>
+      <p class="text-sm text-gray-500">Informe seu nickname para jogar</p>
+    </div>
+
+    <div class="space-y-4">
+      <input
+        [(ngModel)]="nickName"
+        (keyup.enter)="onSubmit()"
+        type="text"
+        placeholder="Seu nickname"
+        class="w-full p-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white text-center focus:outline-none focus:border-indigo-500 transition"
+        maxlength="20"
+      />
+
+      <button
+        (click)="onSubmit()"
+        class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-6 py-3 rounded-full transition-all w-full">
+        Entrar
+      </button>
+    </div>
+
+  </div>
+</div>

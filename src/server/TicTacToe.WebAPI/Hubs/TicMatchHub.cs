@@ -1,7 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.SignalR;
+using TicTacToe.Application.UseCases.Match.AbandonMatch;
 using TicTacToe.Application.UseCases.Match.JoinMatch;
 using TicTacToe.Application.UseCases.Match.MakeMove;
+using TicTacToe.Application.UseCases.Match.Rematch;
+using TicTacToe.Application.UseCases.Match.Shared;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.WebAPI.Hubs
 {
@@ -21,11 +25,11 @@ namespace TicTacToe.WebAPI.Hubs
 
             if (result == null)
             {
-                throw new Exception("Match not found or invalid command.");
+                throw new DomainException("Match not found or invalid command.");
             }
 
             await Groups.AddToGroupAsync(Context.ConnectionId, GetGroupName(Guid.Parse(command.MatchId)));
-            await NotifyAllPlayersFromMatchAsync<JoinMatchResponse>(result, Guid.Parse(command.MatchId), "TicPlayerJoined");
+            await NotifyAllPlayersFromMatchAsync<TicMatchStateResponse>(result, Guid.Parse(command.MatchId), "TicPlayerJoined");
         }
 
         public async Task MakePlayerMoveAsync(MakePlayerMoveCommand command)
@@ -33,9 +37,29 @@ namespace TicTacToe.WebAPI.Hubs
             var result = await _mediator.Send(command);
             if (result == null)
             {
-                throw new Exception("Invalid move or match not found.");
+                throw new DomainException("Invalid move or match not found.");
             }
-            await NotifyAllPlayersFromMatchAsync<MakePlayerMoveResponse>(result, Guid.Parse(command.MatchId), "TicPlayerMadeMove");
+            await NotifyAllPlayersFromMatchAsync<TicMatchStateResponse>(result, Guid.Parse(command.MatchId), "TicPlayerMadeMove");
+        }
+
+        public async Task AbandonMatchAsync(AbandonMatchCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+            {
+                throw new DomainException("Failed to abandon match.");
+            }
+            await NotifyAllPlayersFromMatchAsync<TicMatchStateResponse>(result, Guid.Parse(command.MatchId), "TicMatchAbandoned");
+        }
+
+        public async Task RematchAsync(RematchCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+            {
+                throw new DomainException("Failed to create rematch.");
+            }
+            await NotifyAllPlayersFromMatchAsync<TicMatchStateResponse>(result, Guid.Parse(command.PreviousMatchId), "TicMatchRematch");
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

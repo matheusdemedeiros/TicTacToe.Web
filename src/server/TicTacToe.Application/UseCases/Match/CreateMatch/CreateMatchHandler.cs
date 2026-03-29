@@ -37,6 +37,7 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
             var response = new CreateTicMatchResponse()
             {
                 MatchId = ticMatch.Id,
+                ShortCode = ticMatch.ShortCode,
                 TicPlayerWithXSymbolId = ticPlayerWithXSymbolId,
                 TicPlayerWithOSymbolId = ticPlayerWithOSymbolId
             };

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TicTacToe.Application.UseCases.Match.AddPlayer;
 using TicTacToe.Application.UseCases.Match.CreateMatch;
+using TicTacToe.Application.UseCases.Match.ResolveMatchByCode;
 using TicTacToe.Application.UseCases.Match.RetriveMatchById;
 
 namespace TicTacToe.Infra.Data.Controllers
@@ -28,13 +29,7 @@ namespace TicTacToe.Infra.Data.Controllers
         public async Task<IActionResult> CreateMatch(CreateTicMatchCommand command)
         {
             var result = await _mediator.Send(command);
-
-            if (result.MatchId != Guid.Empty)
-            {
-                return Created(result.MatchId.ToString(), result);
-            }
-
-            return BadRequest("Failed to create match.");
+            return Created(result.MatchId.ToString(), result);
         }
 
         /// <summary>
@@ -50,13 +45,7 @@ namespace TicTacToe.Infra.Data.Controllers
         {
             command.MatchId = matchId.ToString();
             var result = await _mediator.Send(command);
-
-            if (result.MatchId != Guid.Empty)
-            {
-                return Ok(result);
-            }
-
-            return BadRequest("Failed to add player.");
+            return Ok(result);
         }
 
         /// <summary>
@@ -71,12 +60,22 @@ namespace TicTacToe.Infra.Data.Controllers
         {
             var command = new RetriveTicMatchByIdQuery() { MatchId = matchId };
             var result = await _mediator.Send(command);
-            if (result != null)
-            {
-                return Ok(result);
-            }
+            return Ok(result);
+        }
 
-            return BadRequest("Failed to retrive match.");
+        /// <summary>
+        /// Resolve a match by its short code.
+        /// </summary>
+        /// <param name="code">6-character match code</param>
+        /// <returns></returns>
+        [HttpGet("code/{code}")]
+        [ProducesResponseType(typeof(ResolveMatchByCodeResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResolveMatchByCode(string code)
+        {
+            var query = new ResolveMatchByCodeQuery { ShortCode = code };
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

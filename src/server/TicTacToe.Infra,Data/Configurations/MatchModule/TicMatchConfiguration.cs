@@ -12,6 +12,13 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
 
             builder.HasKey(p => p.Id);
 
+            builder.Property(p => p.ShortCode)
+                .IsRequired()
+                .HasMaxLength(6);
+
+            builder.HasIndex(p => p.ShortCode)
+                .IsUnique();
+
             builder.Property(p => p.State)
                 .IsRequired()
                 .HasColumnType("int");

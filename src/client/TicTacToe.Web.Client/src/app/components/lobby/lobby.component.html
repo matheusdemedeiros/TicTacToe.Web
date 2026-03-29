@@ -1,0 +1,69 @@
+<div class="bg-black min-h-screen flex items-center justify-center px-4 py-8">
+  <div class="w-full max-w-lg space-y-8">
+
+    <!-- Header -->
+    <div class="text-center space-y-2">
+      <h1 class="text-3xl font-extrabold text-indigo-500">Jogo da Velha</h1>
+      <div class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-full px-4 py-1.5">
+        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+        <span class="text-sm text-gray-400">Jogando como <span class="text-white font-medium">{{ nickName }}</span></span>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <!-- Criar Partida -->
+      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4">
+        <h2 class="text-lg font-bold text-white">Criar Partida</h2>
+
+        <div class="space-y-3">
+          <label class="flex items-center gap-3 text-sm text-gray-300 cursor-pointer bg-zinc-800 rounded-xl px-4 py-3 hover:bg-zinc-700 transition">
+            <input type="radio" name="playMode" [value]="playModeTypes.PlayerVsPlayer" [(ngModel)]="playMode" class="accent-indigo-500" />
+            Jogar com um amigo
+          </label>
+          <label class="flex items-center gap-3 text-sm text-gray-300 cursor-pointer bg-zinc-800 rounded-xl px-4 py-3 hover:bg-zinc-700 transition">
+            <input type="radio" name="playMode" [value]="playModeTypes.PlayerVsComputer" [(ngModel)]="playMode" class="accent-indigo-500" />
+            Jogar contra o computador
+          </label>
+        </div>
+
+        <button
+          (click)="onCreateMatch()"
+          class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-4 py-2.5 rounded-full transition-all w-full text-sm">
+          Criar Partida
+        </button>
+      </div>
+
+      <!-- Entrar em Partida -->
+      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-4">
+        <h2 class="text-lg font-bold text-white">Entrar em Partida</h2>
+
+        <input
+          [(ngModel)]="joinCode"
+          (keyup.enter)="onJoinMatch()"
+          type="text"
+          placeholder="Ex: X7K2M9"
+          class="w-full p-3 bg-zinc-800 border border-zinc-700 rounded-xl text-white text-sm focus:outline-none focus:border-indigo-500 transition"
+        />
+
+        <button
+          (click)="onJoinMatch()"
+          class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-4 py-2.5 rounded-full transition-all w-full text-sm">
+          Entrar na Partida
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Trocar nickname -->
+    <div class="text-center">
+      <button
+        (click)="onLogout()"
+        class="text-sm text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition">
+        Trocar nickname
+      </button>
+    </div>
+
+  </div>
+</div>

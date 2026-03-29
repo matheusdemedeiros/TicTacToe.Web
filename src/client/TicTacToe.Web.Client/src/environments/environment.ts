@@ -1,4 +1,4 @@
 export const environment = {
     envName: 'production',
-    apiUrl: "https://localhost:44326/"
+    apiUrl: "https://api-tictactoe-bvhncffjapd9f9az.canadacentral-01.azurewebsites.net/"
 };

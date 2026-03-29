@@ -1,10 +1,12 @@
 ﻿using MediatR;
+using TicTacToe.Application.UseCases.Match.Shared;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.SharedModule.Exceptions;
 
 namespace TicTacToe.Application.UseCases.Match.MakeMove
 {
-    public class MakePlayerMoveHandler : IRequestHandler<MakePlayerMoveCommand, MakePlayerMoveResponse>
+    public class MakePlayerMoveHandler : IRequestHandler<MakePlayerMoveCommand, TicMatchStateResponse>
     {
         private readonly ITicMatchRepository _ticMatchRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -15,7 +17,7 @@ namespace TicTacToe.Application.UseCases.Match.MakeMove
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<MakePlayerMoveResponse> Handle(MakePlayerMoveCommand request, CancellationToken cancellationToken)
+        public async Task<TicMatchStateResponse> Handle(MakePlayerMoveCommand request, CancellationToken cancellationToken)
         {
             var matchId = Guid.Parse(request.MatchId);
             var playerId = Guid.Parse(request.PlayerId);
@@ -23,12 +25,12 @@ namespace TicTacToe.Application.UseCases.Match.MakeMove
 
             if (match == null)
             {
-                throw new Exception("Match not found.");
+                throw new DomainException("Match not found.");
             }
 
             if (match.CurrentPlayer == null || match.CurrentPlayer.Id != playerId)
             {
-                throw new Exception("It's not your turn.");
+                throw new DomainException("It's not your turn.");
             }
 
             match.MakePlay(match.CurrentPlayer.Symbol, request.CellRow, request.CellCol);
@@ -36,16 +38,7 @@ namespace TicTacToe.Application.UseCases.Match.MakeMove
             await _ticMatchRepository.UpdateAsync(match);
             await _unitOfWork.CommitAsync();
 
-            var response = new MakePlayerMoveResponse
-            {
-                MatchId = match.Id,
-                Board = match.Board.Board,
-                State = match.State,
-                CurrentPlayerId = match.CurrentPlayer != null ? match.CurrentPlayer.Id : Guid.Empty,
-                CurrentPlayerSymbol = match.CurrentPlayer != null ? match.CurrentPlayer.Symbol : string.Empty
-            };
-
-            return response;
+            return TicMatchStateResponse.FromMatch(match);
         }
     }
 }

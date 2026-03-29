@@ -26,13 +26,7 @@ namespace TicTacToe.WebAPI.Controllers
         public async Task<IActionResult> CreatePlayerAsync(CreateTicPlayerCommand command)
         {
             var result = await _mediator.Send(command);
-
-            if (result.id != null)
-            {
-                return Created(result.id.ToString(), result);   
-            }
-
-            return BadRequest("Failed to create player.");
+            return Created(result.id.ToString(), result);
         }
     }
 }

@@ -1,18 +1,20 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { IJoinMatchCommand, IMakePlayerMoveCommand } from './hub-messages.model';
+import { IAbandonMatchCommand, IJoinMatchCommand, IMakePlayerMoveCommand, IRematchCommand, ITicMatchStateResponse } from './hub-messages.model';
+import { NotificationService } from '../../../../core/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class TicMatchHubService {
-  public connectionEstablished = new EventEmitter<Boolean>();
+  public connectionEstablished = new BehaviorSubject<boolean>(false);
 
   private readonly hubUrl = `${environment.apiUrl}Ticmatchhub`;
   private hubConnection?: HubConnection;
   private connectionIsEstablished = false;
+  private notificationService: NotificationService = inject(NotificationService);
 
   constructor() {
     this.createConnection();
@@ -20,15 +22,50 @@ export class TicMatchHubService {
   }
 
   public joinMatch(joinMatchCommand: IJoinMatchCommand): void {
-    this.hubConnection!.invoke('JoinMatchAsync', joinMatchCommand);
-  }
-  
-  public makePlayerMove(makePlayerMoveCommand: IMakePlayerMoveCommand): void {
-    
-    this.hubConnection!.invoke('MakePlayerMoveAsync', makePlayerMoveCommand);
+    this.hubConnection!.invoke('JoinMatchAsync', joinMatchCommand)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Falha ao entrar na partida.', 'SignalR');
+      });
   }
 
-  public onPlayerJoined(): Observable<any> {
+  public abandonMatch(command: IAbandonMatchCommand): void {
+    this.hubConnection!.invoke('AbandonMatchAsync', command)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Falha ao abandonar partida.', 'SignalR');
+      });
+  }
+
+  public rematch(command: IRematchCommand): void {
+    this.hubConnection!.invoke('RematchAsync', command)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Falha ao criar revanche.', 'SignalR');
+      });
+  }
+
+  public onMatchAbandoned(): Observable<ITicMatchStateResponse> {
+    return new Observable((observer) => {
+      this.hubConnection?.on('TicMatchAbandoned', (match) => {
+        observer.next(match);
+      });
+    });
+  }
+
+  public onMatchRematch(): Observable<ITicMatchStateResponse> {
+    return new Observable((observer) => {
+      this.hubConnection?.on('TicMatchRematch', (match) => {
+        observer.next(match);
+      });
+    });
+  }
+
+  public makePlayerMove(makePlayerMoveCommand: IMakePlayerMoveCommand): void {
+    this.hubConnection!.invoke('MakePlayerMoveAsync', makePlayerMoveCommand)
+      .catch((err: Error) => {
+        this.notificationService.showError(err.message || 'Falha ao fazer jogada.', 'SignalR');
+      });
+  }
+
+  public onPlayerJoined(): Observable<ITicMatchStateResponse> {
     return new Observable((observer) => {
       this.hubConnection?.on('TicPlayerJoined', (match) => {
         observer.next(match);
@@ -36,13 +73,19 @@ export class TicMatchHubService {
     });
   }
 
-  public onPlayerMadeMove(): Observable<any> {
+  public onPlayerMadeMove(): Observable<ITicMatchStateResponse> {
     return new Observable((observer) => {
       this.hubConnection?.on('TicPlayerMadeMove', (match) => {
-        
         observer.next(match);
       });
     });
+  }
+
+  public clearHandlers(): void {
+    this.hubConnection?.off('TicPlayerJoined');
+    this.hubConnection?.off('TicPlayerMadeMove');
+    this.hubConnection?.off('TicMatchAbandoned');
+    this.hubConnection?.off('TicMatchRematch');
   }
 
   public disconnect(): Promise<void> {
@@ -53,6 +96,13 @@ export class TicMatchHubService {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl)
       .build();
+
+    this.hubConnection.onclose(() => {
+      this.connectionIsEstablished = false;
+      this.connectionEstablished.next(false);
+      this.notificationService.showWarning('Conexao perdida. Reconectando...', 'Conexao');
+      setTimeout(() => { this.startConnection(); }, 5000);
+    });
   }
 
   private startConnection(): void {
@@ -60,11 +110,10 @@ export class TicMatchHubService {
       .start()
       .then(() => {
         this.connectionIsEstablished = true;
-        console.log('Hub connection started');
-        this.connectionEstablished.emit(true);
+        this.connectionEstablished.next(true);
       })
-      .catch(err => {
-        console.log('Error while establishing connection, retrying...');
+      .catch(() => {
+        this.notificationService.showError('Nao foi possivel conectar ao servidor. Tentando novamente...', 'Conexao');
         setTimeout(() => { this.startConnection(); }, 5000);
       });
   }
