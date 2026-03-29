@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tictactoe-sql
+    restart: unless-stopped
+    volumes:
+      - sql_data:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    networks:
+      - tictactoe-network
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    image: ${DOCKERHUB_USER}/tictactoe-api:${BACKEND_TAG}
+    container_name: tictactoe-backend
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=tictactoe-sql,1433;Database=TicTacToeDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Cors__AllowedOrigins__0=http://${VPS_HOST}
+      - Cors__AllowedOrigins__1=https://${VPS_HOST}
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    networks:
+      - tictactoe-network
+
+  frontend:
+    image: ${DOCKERHUB_USER}/tictactoe-app:${FRONTEND_TAG}
+    container_name: tictactoe-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - tictactoe-network
+      - proxy-network
+
+networks:
+  tictactoe-network:
+    driver: bridge
+  proxy-network:
+    external: true
+
+volumes:
+  sql_data:
