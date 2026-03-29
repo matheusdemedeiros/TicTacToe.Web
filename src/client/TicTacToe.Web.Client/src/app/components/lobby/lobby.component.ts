@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { mergeMap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { MatchService } from '../home/shared/services/match.service';
@@ -8,18 +9,21 @@ import { PlayerSessionService } from '../../core/player-session.service';
 import { GameSessionService } from '../../core/game-session.service';
 import { NotificationService } from '../../core/notification.service';
 import { PlayModeTypes } from '../home/shared/models/play-mode-types.enum';
+import { ComputerDifficulty } from '../home/shared/models/computer-difficulty.enum';
 
 @Component({
   selector: 'app-lobby',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, NgClass],
   templateUrl: './lobby.component.html',
   styleUrl: './lobby.component.scss'
 })
 export class LobbyComponent {
   protected playMode: PlayModeTypes = PlayModeTypes.PlayerVsPlayer;
   protected joinCode: string = '';
+  protected computerDifficulty: ComputerDifficulty = ComputerDifficulty.Medium;
   protected playModeTypes = PlayModeTypes;
+  protected computerDifficultyEnum = ComputerDifficulty;
 
   private router = inject(Router);
   private matchService = inject(MatchService);
@@ -36,7 +40,12 @@ export class LobbyComponent {
   }
 
   public onCreateMatch(): void {
-    this.matchService.create({ playMode: this.playMode, initialPlayerId: this.playerId })
+    const command = {
+      playMode: this.playMode,
+      initialPlayerId: this.playerId,
+      ...(this.playMode === PlayModeTypes.PlayerVsComputer && { computerDifficulty: this.computerDifficulty })
+    };
+    this.matchService.create(command)
       .subscribe({
         next: (response) => {
           this.gameSession.save(response.matchId, this.playerId);

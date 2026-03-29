@@ -24,12 +24,18 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
 
         public async Task<CreateTicMatchResponse> Handle(CreateTicMatchCommand request, CancellationToken cancellationToken)
         {
-            var ticMatch = new TicMatch(request.PlayMode);
+            var ticMatch = CreateMatch(request);
 
             await AddInitialPlayerIfExists(request, ticMatch);
 
-            await _ticMatchRepository.CreateAsync(ticMatch);
+            if (ticMatch.IsPlayerVsComputer)
+            {
+                var computerPlayer = ticMatch.AddComputerPlayer();
+                await _ticPlayerRepository.CreateAsync(computerPlayer);
+                ticMatch.StartMatch();
+            }
 
+            await _ticMatchRepository.CreateAsync(ticMatch);
             await _unitOfWork.CommitAsync();
 
             var ticPlayerWithXSymbolId = ticMatch.Players.FirstOrDefault(p => p.Symbol == "X")?.Id ?? Guid.Empty;
@@ -43,6 +49,14 @@ namespace TicTacToe.Application.UseCases.Match.CreateMatch
             };
 
             return response;
+        }
+
+        private static TicMatch CreateMatch(CreateTicMatchCommand request)
+        {
+            if (request.PlayMode == PlayModeType.PlayerVsComputer && request.ComputerDifficulty.HasValue)
+                return new TicMatch(request.PlayMode, request.ComputerDifficulty.Value);
+
+            return new TicMatch(request.PlayMode);
         }
 
         private async Task AddInitialPlayerIfExists(CreateTicMatchCommand request, TicMatch ticMatch)

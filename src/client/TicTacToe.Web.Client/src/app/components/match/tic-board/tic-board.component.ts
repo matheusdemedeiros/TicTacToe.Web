@@ -1,4 +1,4 @@
-﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { TicBoardCellComponent } from '../tic-board-cell/tic-board-cell.component';
 import { TicMatch } from '../shared/models/tic-match.model';
@@ -15,6 +15,12 @@ import { TicBoardCellState } from '../tic-board-cell/models/tic-board-cell-state
 export class TicBoardComponent {
   @Input() currentMatch: TicMatch | undefined;
   @Input() disabled: boolean = false;
+  @Input() winningCells: number[][] | null = null;
+
+  public isWinningCell(row: number, col: number): boolean {
+    if (!this.winningCells) return false;
+    return this.winningCells.some(c => c[0] === row && c[1] === col);
+  }
   @Output() cellClick = new EventEmitter<{ row: number; col: number }>();
 
   public handleCellClick(row: number, col: number): void {

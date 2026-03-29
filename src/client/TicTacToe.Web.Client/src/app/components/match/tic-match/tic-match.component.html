@@ -44,7 +44,7 @@
           } @else {
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/10 border border-yellow-500/20">
               <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
-              <p class="text-sm text-yellow-400">Aguardando oponente entrar...</p>
+              <p class="text-sm text-yellow-400">{{ isVsComputer ? 'Iniciando partida...' : 'Aguardando oponente entrar...' }}</p>
             </div>
           }
         </div>
@@ -53,10 +53,11 @@
       <app-tic-board
         [currentMatch]="currentMatch"
         [disabled]="isBoardLocked"
+        [winningCells]="winningCells"
         (cellClick)="onCellClick($event)">
       </app-tic-board>
 
-      @if (currentMatch?.shortCode) {
+      @if (currentMatch?.shortCode && !isVsComputer) {
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
           <div class="text-left">
             <p class="text-[10px] text-gray-600 uppercase tracking-wider">Codigo da partida</p>
@@ -76,6 +77,13 @@
         </div>
       }
 
+      @if (showProceedButton && !showGameOverModal) {
+        <button
+          (click)="onShowResult()"
+          class="bg-indigo-500 hover:bg-indigo-400 text-white font-semibold px-6 py-3 rounded-full transition-all w-full text-sm animate-pulse">Ver resultado
+        </button>
+      }
+
       @if (!isGameOver) {
         <button
           (click)="onAbandonMatch()"
@@ -89,7 +97,8 @@
 
   @if (showGameOverModal) {
     <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-      <div class="bg-zinc-900 border border-indigo-500/20 rounded-2xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl shadow-indigo-500/5">
+      <div class="bg-zinc-900 border border-indigo-500/20 rounded-2xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl shadow-indigo-500/5 relative">
+        <button (click)="onCloseModal()" class="absolute top-3 right-3 text-gray-500 hover:text-white text-xl transition">✕</button>
         <p class="text-xl font-bold text-white">Fim de Jogo</p>
         @if (currentMatch?.isAbandoned) {
           <p class="text-4xl">&#128075;</p>

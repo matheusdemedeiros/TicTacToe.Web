@@ -25,7 +25,11 @@ export class TicMatchComponent implements OnInit, OnDestroy {
   protected currentPlayerSymbol: string = '';
   protected currentMatch: TicMatch | undefined;
   protected showGameOverModal: boolean = false;
+  protected showProceedButton: boolean = false;
+  protected isComputerThinking: boolean = false;
+  private readonly COMPUTER_MOVE_DELAY_MS = 1500;
   protected codeCopied: boolean = false;
+  protected winningCells: number[][] | null = null;
 
   private subscriptions: Subscription[] = [];
   private route = inject(ActivatedRoute);
@@ -58,12 +62,16 @@ export class TicMatchComponent implements OnInit, OnDestroy {
     return this.currentPlayerId === this.myPlayerId;
   }
 
+  public get isVsComputer(): boolean {
+    return this.currentMatch?.playMode === 1;
+  }
+
   public get isGameOver(): boolean {
     return this.currentMatch?.isFinished ?? false;
   }
 
   public get isBoardLocked(): boolean {
-    return !this.isMyTurn || this.isGameOver || this.currentMatch?.state !== TicMatchState.IN_PROGRESS;
+    return !this.isMyTurn || this.isGameOver || this.isComputerThinking || this.currentMatch?.state !== TicMatchState.IN_PROGRESS;
   }
 
   public ngOnInit(): void {
@@ -145,12 +153,11 @@ export class TicMatchComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.ticMatchHubService.onPlayerMadeMove().subscribe({
         next: (response: ITicMatchStateResponse) => {
-          this.updateMatchState(response);
-          if (response.isFinished) {
-            this.gameSessionService.clear();
-            this.showGameOverModal = true;
-          } else if (this.isMyTurn) {
-            this.notificationService.showInfo('Sua vez!', 'Jogo');
+          if (this.isVsComputer && response.computerMoveRow != null && response.computerMoveCol != null) {
+            this.applyMoveWithComputerDelay(response);
+          } else {
+            this.updateMatchState(response);
+            this.handleMoveResult(response);
           }
         }
       })
@@ -172,14 +179,64 @@ export class TicMatchComponent implements OnInit, OnDestroy {
           this.currentMatchId = response.matchId;
           this.gameSessionService.save(this.currentMatchId, this.myPlayerId);
           this.showGameOverModal = false;
+          this.showProceedButton = false;
           this.updateMatchState(response);
           this.connectToMatchHub();
-          this.notificationService.showSuccess('Nova partida criada! Aguardando jogadores...', 'Revanche');
+          const msg = this.isVsComputer ? 'Nova partida contra o computador!' : 'Nova partida criada! Aguardando jogadores...';
+          this.notificationService.showSuccess(msg, 'Revanche');
         }
       })
     );
   }
 
+  public onShowResult(): void {
+    this.showGameOverModal = true;
+  }
+
+  public onCloseModal(): void {
+    this.showGameOverModal = false;
+  }
+
+  public isWinningCell(row: number, col: number): boolean {
+    if (!this.winningCells) return false;
+    return this.winningCells.some(c => c[0] === row && c[1] === col);
+  }
+
+  private handleMoveResult(response: ITicMatchStateResponse): void {
+    if (response.isFinished) {
+      this.gameSessionService.clear();
+      if (response.winningCells) {
+        this.showProceedButton = true;
+      } else {
+        this.showGameOverModal = true;
+      }
+    } else if (this.isMyTurn) {
+      this.notificationService.showInfo('Sua vez!', 'Jogo');
+    }
+  }
+
+  private applyMoveWithComputerDelay(response: ITicMatchStateResponse): void {
+    this.isComputerThinking = true;
+    const intermediateResponse = { ...response, computerMoveRow: null, computerMoveCol: null };
+    const savedBoard = response.board;
+    const cpuRow = response.computerMoveRow!;
+    const cpuCol = response.computerMoveCol!;
+
+    const boardWithoutCpu = savedBoard.map((row: any[], ri: number) =>
+      row.map((cell: any, ci: number) =>
+        ri === cpuRow && ci === cpuCol ? { symbol: '', state: 0 } : cell
+      )
+    );
+
+    this.updateMatchState({ ...response, board: boardWithoutCpu, isFinished: false, winningCells: null });
+
+    setTimeout(() => {
+      this.isComputerThinking = false;
+      this.updateMatchState(response);
+      this.handleMoveResult(response);
+    }, this.COMPUTER_MOVE_DELAY_MS);
+
+  }
   public onCopyCode(): void {
     const code = this.currentMatch?.shortCode ?? '';
     navigator.clipboard.writeText(code).then(() => {
@@ -214,9 +271,12 @@ export class TicMatchComponent implements OnInit, OnDestroy {
       isTie: response.isTie,
       isAbandoned: response.isAbandoned,
       winnerSymbol: response.winnerSymbol,
-      winnerPlayerId: response.winnerPlayerId
+      winnerPlayerId: response.winnerPlayerId,
+      playMode: response.playMode,
+      computerDifficulty: response.computerDifficulty
     };
     this.currentPlayerId = response.currentPlayerId;
     this.currentPlayerSymbol = response.currentPlayerSymbol;
+    this.winningCells = response.winningCells;
   }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TicTacToe.Domain.Interfaces;
 using TicTacToe.Domain.Interfaces.MatchModule;
+using TicTacToe.Domain.Services.MatchModule;
 using TicTacToe.Infra.Data.Contexts;
 using TicTacToe.Infra.Data.Repositories;
 using TicTacToe.Infra_Data.Contexts;
@@ -22,6 +23,7 @@ namespace TicTacToe.Infra.Data
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITicPlayerRepository, TicPlayerRepository>();
             services.AddScoped<ITicMatchRepository, TicMatchRepository>();
+            services.AddScoped<IComputerMoveCalculator, ComputerMoveCalculator>();
         }
     }
 }

@@ -10,6 +10,7 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public TicMatchState State { get; private set; }
         public virtual TicScore TicScore { get; private set; }
         public PlayModeType PlayMode { get; private set; }
+        public ComputerDifficulty? ComputerDifficulty { get; private set; }
         public virtual TicPlayer? CurrentPlayer { get; private set; }
         public Guid? CurrentPlayerId { get; set; }
         public Guid TicBoardId { get; set; }
@@ -19,6 +20,8 @@ namespace TicTacToe.Domain.Entities.MatchModule
         private const int MAX_PLAYERS = 2;
         private const int SHORT_CODE_LENGTH = 6;
         private const string SHORT_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        private const string COMPUTER_PLAYER_NAME = "Computador";
+        private const string COMPUTER_PLAYER_NICKNAME = "CPU";
 
         public TicMatch() : base()
         {
@@ -34,6 +37,45 @@ namespace TicTacToe.Domain.Entities.MatchModule
         public TicMatch(PlayModeType playMode) : this()
         {
             PlayMode = playMode;
+        }
+
+        public TicMatch(PlayModeType playMode, ComputerDifficulty difficulty) : this()
+        {
+            if (playMode != PlayModeType.PlayerVsComputer)
+                throw new DomainException("Computer difficulty can only be set for Player vs Computer matches.");
+
+            PlayMode = playMode;
+            ComputerDifficulty = difficulty;
+        }
+
+        public bool IsPlayerVsComputer => PlayMode == PlayModeType.PlayerVsComputer;
+
+        public bool IsComputerTurn => IsPlayerVsComputer
+            && State == TicMatchState.IN_PROGRESS
+            && CurrentPlayer != null
+            && CurrentPlayer.NickName == COMPUTER_PLAYER_NICKNAME;
+
+        public TicPlayer? GetComputerPlayer()
+        {
+            return Players.FirstOrDefault(p => p.NickName == COMPUTER_PLAYER_NICKNAME);
+        }
+
+        public TicPlayer AddComputerPlayer()
+        {
+            if (!IsPlayerVsComputer)
+                throw new DomainException("Cannot add computer player to a Player vs Player match.");
+
+            var computerPlayer = new TicPlayer(COMPUTER_PLAYER_NAME, COMPUTER_PLAYER_NICKNAME);
+            AddPlayer(computerPlayer);
+            return computerPlayer;
+        }
+
+        public void MakeComputerPlay(int positionX, int positionY)
+        {
+            if (!IsComputerTurn)
+                throw new DomainException("It is not the computer's turn.");
+
+            MakePlay(CurrentPlayer!.Symbol, positionX, positionY);
         }
 
         public void AddPlayer(TicPlayer ticPlayer)

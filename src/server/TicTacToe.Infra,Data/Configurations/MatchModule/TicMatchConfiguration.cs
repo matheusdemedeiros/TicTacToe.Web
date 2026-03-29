@@ -27,6 +27,9 @@ namespace TicTacToe.Infra_Data.Configurations.MatchModule
                 .IsRequired()
                 .HasColumnType("int");
 
+            builder.Property(p => p.ComputerDifficulty)
+                .HasColumnType("int");
+
             builder.HasOne(p => p.TicScore)
                 .WithOne()
                 .HasForeignKey<TicScore>(b => b.MatchId)

@@ -10,11 +10,13 @@ namespace TicTacToe.Application.UseCases.Match.Rematch
     public class RematchHandler : IRequestHandler<RematchCommand, TicMatchStateResponse>
     {
         private readonly ITicMatchRepository _ticMatchRepository;
+        private readonly ITicPlayerRepository _ticPlayerRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RematchHandler(ITicMatchRepository ticMatchRepository, IUnitOfWork unitOfWork)
+        public RematchHandler(ITicMatchRepository ticMatchRepository, ITicPlayerRepository ticPlayerRepository, IUnitOfWork unitOfWork)
         {
             _ticMatchRepository = ticMatchRepository;
+            _ticPlayerRepository = ticPlayerRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -38,18 +40,33 @@ namespace TicTacToe.Application.UseCases.Match.Rematch
                 throw new DomainException("Previous match does not have two players.");
             }
 
-            var newMatch = new TicMatch(previousMatch.PlayMode);
-
-            var previousPlayerX = previousMatch.Players.FirstOrDefault(p => p.Symbol == "X");
-            var previousPlayerO = previousMatch.Players.FirstOrDefault(p => p.Symbol == "O");
-
-            newMatch.AddPlayer(previousPlayerO!);
-            newMatch.AddPlayer(previousPlayerX!);
+            var newMatch = CreateRematchFromPrevious(previousMatch);
 
             await _ticMatchRepository.CreateAsync(newMatch);
             await _unitOfWork.CommitAsync();
 
             return TicMatchStateResponse.FromMatch(newMatch);
+        }
+
+        private TicMatch CreateRematchFromPrevious(TicMatch previousMatch)
+        {
+            if (previousMatch.IsPlayerVsComputer && previousMatch.ComputerDifficulty.HasValue)
+            {
+                var newMatch = new TicMatch(PlayModeType.PlayerVsComputer, previousMatch.ComputerDifficulty.Value);
+                var humanPlayer = previousMatch.Players.FirstOrDefault(p => p.NickName != "CPU")!;
+                newMatch.AddPlayer(humanPlayer);
+                var computerPlayer = newMatch.AddComputerPlayer();
+                _ticPlayerRepository.CreateAsync(computerPlayer);
+                newMatch.StartMatch();
+                return newMatch;
+            }
+
+            var pvpMatch = new TicMatch(previousMatch.PlayMode);
+            var previousPlayerX = previousMatch.Players.FirstOrDefault(p => p.Symbol == "X");
+            var previousPlayerO = previousMatch.Players.FirstOrDefault(p => p.Symbol == "O");
+            pvpMatch.AddPlayer(previousPlayerO!);
+            pvpMatch.AddPlayer(previousPlayerX!);
+            return pvpMatch;
         }
     }
 }

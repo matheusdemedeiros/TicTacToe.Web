@@ -1,4 +1,4 @@
-﻿<div class="grid grid-cols-3 gap-2 mb-6">
+<div class="grid grid-cols-3 gap-2 mb-6">
   @for (row of displayedBoard; let rowIndex = $index; track rowIndex) {
     @for (cell of row; let colIndex = $index; track colIndex) {
       <app-tic-board-cell
@@ -7,6 +7,7 @@
         [symbol]="cell.symbol"
         [state]="cell.state"
         [disabled]="disabled"
+        [isWinningCell]="isWinningCell(rowIndex, colIndex)"
         (cellClicked)="handleCellClick(rowIndex, colIndex)">
       </app-tic-board-cell>
     }

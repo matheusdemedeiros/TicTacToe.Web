@@ -35,5 +35,10 @@ export interface ITicMatchStateResponse {
     isTie: boolean,
     isAbandoned: boolean,
     winnerSymbol: string | null,
-    winnerPlayerId: string | null
+    winnerPlayerId: string,
+    playMode: number,
+    computerDifficulty: number | null,
+    winningCells: number[][] | null,
+    computerMoveRow: number | null,
+    computerMoveCol: number | null | null
 }
