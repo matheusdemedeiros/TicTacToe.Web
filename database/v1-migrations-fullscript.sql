@@ -365,6 +365,23 @@ BEGIN
     VALUES (N'20260328185416_AddShortCodeToTicMatch', N'9.0.5');
 END;
 
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260329035721_AddComputerDifficultyToTicMatch'
+)
+BEGIN
+    ALTER TABLE [TicMatches] ADD [ComputerDifficulty] int NULL;
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260329035721_AddComputerDifficultyToTicMatch'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260329035721_AddComputerDifficultyToTicMatch', N'9.0.5');
+END;
+
 COMMIT;
 GO
 
