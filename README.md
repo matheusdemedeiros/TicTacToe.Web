@@ -41,7 +41,7 @@ TicTacToe.Web/
       TicTacToe.WebAPI/               # ASP.NET Core Web API
       TicTacToe.Application/          # Use Cases (CQRS with MediatR)
       TicTacToe.Domain/               # Entities, Enums, Interfaces
-      TicTacToe.Infra,Data/           # EF Core, Repositories, Migrations
+      TicTacToe.Infra.Data/           # EF Core, Repositories, Migrations
       TicTacToe.Domain.UnitTests/     # xUnit + FluentAssertions
 ```
 
