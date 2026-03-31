@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\TicTacToe.Infra,Data\TicTacToe.Infra.Data.csproj" />
+	  <ProjectReference Include="..\TicTacToe.Infra.Data\TicTacToe.Infra.Data.csproj" />
 	</ItemGroup>
 
 </Project>
